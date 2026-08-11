@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LiquidLens — 14 Tooltip &amp; Popover</title>
+<link rel="stylesheet" href="../packages/core/tokens.css" />
+<link rel="stylesheet" href="../packages/core/liquid-glass.css" />
+<link rel="stylesheet" href="../assets/demo.css" />
+<style>
+  .stage { display: flex; flex-direction: column; align-items: center; gap: 46px; }
+
+  /* Tooltips */
+  .tt-row { display: flex; gap: 20px; }
+  .tt-wrap { position: relative; }
+  .anchor { width: 52px; height: 52px; display: grid; place-items: center; --lg-radius: 16px; cursor: pointer; }
+  .anchor svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+  .tip {
+    position: absolute; bottom: calc(100% + 12px); left: 50%; transform: translateX(-50%) translateY(4px);
+    padding: 8px 13px; --lg-radius: 12px; font-size: 13px; font-weight: 600; white-space: nowrap;
+    opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s var(--lg-ease); z-index: 5;
+  }
+  .tt-wrap:hover .tip { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* Popover */
+  .pop-wrap { position: relative; }
+  .pop {
+    position: absolute; top: calc(100% + 14px); left: 50%; transform: translateX(-50%);
+    width: 260px; padding: 8px; --lg-radius: 22px; z-index: 6;
+    transition: opacity .25s, transform .25s var(--lg-ease);
+  }
+  .pop.hide { opacity: 0; transform: translateX(-50%) translateY(-8px); pointer-events: none; }
+  .pop::before {
+    content: ""; position: absolute; top: -7px; left: 50%; transform: translateX(-50%) rotate(45deg);
+    width: 14px; height: 14px; background: hsla(var(--lg-tint-h),40%,70%,.14); border-radius: 3px;
+    box-shadow: -1px -1px 0 rgba(255,255,255,.25) inset;
+  }
+  .pop .ph { padding: 10px 12px 8px; font-size: 12px; letter-spacing: .05em; text-transform: uppercase; opacity: .6; }
+  .pop .row { display: flex; align-items: center; gap: 11px; padding: 10px 12px; border-radius: 13px; cursor: pointer; transition: background .16s; }
+  .pop .row:hover { background: rgba(255,255,255,.13); }
+  .pop .row svg { width: 19px; height: 19px; stroke: currentColor; fill: none; stroke-width: 1.9; }
+  .pop .row.danger { color: #ff8a80; }
+  .pop .div { height: 1px; background: rgba(255,255,255,.14); margin: 6px 8px; }
+</style>
+</head>
+<body>
+  <div class="wallpaper wp-aurora"><div class="bg-text"><span>Hint</span><span>Popover</span></div></div>
+  <div class="demo-label">14 · Tooltip &amp; Popover</div>
+
+  <div class="center">
+    <div class="stage">
+      <div class="tt-row">
+        <div class="tt-wrap">
+          <div class="lg-glass anchor lg-press" data-glass aria-label="add"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
+          <div class="lg-glass tip" data-glass>Create new</div>
+        </div>
+        <div class="tt-wrap">
+          <div class="lg-glass anchor lg-press" data-glass aria-label="share"><svg viewBox="0 0 24 24"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7M12 3v13M8 7l4-4 4 4"/></svg></div>
+          <div class="lg-glass tip" data-glass>Share this item</div>
+        </div>
+        <div class="tt-wrap">
+          <div class="lg-glass anchor lg-press" data-glass aria-label="star"><svg viewBox="0 0 24 24"><path d="M12 3l2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 16.9 6.8 19.2l1-5.9L3.5 9.2l5.9-.8z"/></svg></div>
+          <div class="lg-glass tip lg-tint-amber" data-glass>Add to favorites</div>
+        </div>
+        <div class="tt-wrap">
+          <div class="lg-glass anchor lg-press" data-glass aria-label="delete"><svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg></div>
+          <div class="lg-glass tip lg-tint-red" data-glass>Move to trash</div>
+        </div>
+      </div>
+
+      <div class="pop-wrap">
+        <button class="lg-glass lg-btn lg-pill lg-press lg-interactive lg-tint-blue" data-pop-btn>
+          Options
+          <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+
+        <div class="lg-glass pop" data-glass data-pop data-lg-refraction="20">
+          <div class="ph">Quick actions</div>
+          <div class="row"><svg viewBox="0 0 24 24"><path d="M12 20h9M16 4l4 4L8 20l-4 1 1-4z"/></svg>Rename</div>
+          <div class="row"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></svg>Duplicate</div>
+          <div class="row"><svg viewBox="0 0 24 24"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7M12 3v13M8 7l4-4 4 4"/></svg>Share</div>
+          <div class="div"></div>
+          <div class="row danger"><svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg>Delete</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../packages/core/liquid-glass.js"></script>
+  <script>
+    LiquidGlass.init({ refraction:18, bezel:22, blur:3 });
+    var pop = document.querySelector('[data-pop]');
+    var btn = document.querySelector('[data-pop-btn]');
+    btn.addEventListener('click', function(e){ e.stopPropagation(); pop.classList.toggle('hide'); });
+    document.addEventListener('click', function(e){ if (!pop.contains(e.target) && e.target !== btn) pop.classList.add('hide'); });
+    pop.querySelectorAll('.row').forEach(function(r){ r.addEventListener('click', function(){ pop.classList.add('hide'); }); });
+    // start with the popover visible so its glass is measured, then tuck it
+    window.addEventListener('load', function(){ setTimeout(function(){ pop.classList.add('hide'); }, 1400); });
+  </script>
+</body>
+</html>

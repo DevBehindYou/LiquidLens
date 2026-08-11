@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LiquidLens — 08 Notification Card</title>
+<link rel="stylesheet" href="../packages/core/tokens.css" />
+<link rel="stylesheet" href="../packages/core/liquid-glass.css" />
+<link rel="stylesheet" href="../assets/demo.css" />
+<style>
+  .feed { display: flex; flex-direction: column; gap: 14px; width: min(400px, 92vw); }
+  .note { display: grid; grid-template-columns: 42px 1fr auto; gap: 12px; align-items: start; padding: 15px 16px; --lg-radius: 24px;
+          transition: transform .35s var(--lg-ease), opacity .35s ease; cursor: pointer; }
+  .note.gone { transform: translateX(120%); opacity: 0; }
+  .note .icon { width: 42px; height: 42px; border-radius: 11px; display: grid; place-items: center; font-size: 22px; }
+  .ic-msg { background: linear-gradient(160deg,#39d98a,#1fa463); }
+  .ic-cal { background: linear-gradient(160deg,#ff5e5e,#c62828); }
+  .ic-mail { background: linear-gradient(160deg,#4aa3ff,#1a6fd6); }
+  .ic-photo { background: linear-gradient(160deg,#ffd36e,#ff9a3d); }
+  .note .body { min-width: 0; }
+  .note .body .top { display: flex; justify-content: space-between; font-size: 12px; opacity: .7; margin-bottom: 2px; }
+  .note .body h4 { margin: 0 0 3px; font-size: 15px; }
+  .note .body p { margin: 0; font-size: 13.5px; line-height: 1.4; opacity: .85; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .note .x { align-self: center; opacity: .5; font-size: 18px; line-height: 1; }
+  .banner { grid-template-columns: 1fr; text-align: left; }
+</style>
+</head>
+<body>
+  <div class="wallpaper wp-aurora"><div class="bg-text"><span>Ping</span><span>Alert</span></div></div>
+  <div class="demo-label">08 · Notification Card</div>
+
+  <div class="center">
+    <div class="feed">
+      <div class="lg-glass note" data-glass data-dismiss>
+        <div class="icon ic-msg">💬</div>
+        <div class="body">
+          <div class="top"><span>Messages</span><span>now</span></div>
+          <h4>Ravi Patel</h4>
+          <p>Just landed — grabbing a cab. See you at the venue in about 20 minutes 🙌</p>
+        </div>
+        <div class="x">×</div>
+      </div>
+
+      <div class="lg-glass note" data-glass data-dismiss>
+        <div class="icon ic-cal">📅</div>
+        <div class="body">
+          <div class="top"><span>Calendar</span><span>9:41 AM</span></div>
+          <h4>Design Review</h4>
+          <p>Starts in 15 minutes · Studio 4 with the product team.</p>
+        </div>
+        <div class="x">×</div>
+      </div>
+
+      <div class="lg-glass note lg-tint-blue" data-glass data-dismiss>
+        <div class="icon ic-mail">✉️</div>
+        <div class="body">
+          <div class="top"><span>Mail</span><span>8:12 AM</span></div>
+          <h4>Weekly digest is ready</h4>
+          <p>3 threads need your reply. Tap to open your inbox and clear the queue.</p>
+        </div>
+        <div class="x">×</div>
+      </div>
+
+      <div class="lg-glass note lg-clear" data-glass data-dismiss>
+        <span class="lg-scrim"></span>
+        <div class="icon ic-photo">🌇</div>
+        <div class="body">
+          <div class="top"><span>Photos</span><span>Yesterday</span></div>
+          <h4>New Memory: Coastline</h4>
+          <p>A collection from your weekend trip is ready to watch.</p>
+        </div>
+        <div class="x">×</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../packages/core/liquid-glass.js"></script>
+  <script>
+    LiquidGlass.init({ refraction:18, bezel:22, blur:3 });
+    document.querySelectorAll('[data-dismiss]').forEach(function(n){
+      n.addEventListener('click', function(){
+        n.classList.add('gone');
+        setTimeout(function(){ n.style.display = 'none'; }, 380);
+      });
+    });
+  </script>
+</body>
+</html>

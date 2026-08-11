@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LiquidLens — 07 Slider &amp; Progress</title>
+<link rel="stylesheet" href="../packages/core/tokens.css" />
+<link rel="stylesheet" href="../packages/core/liquid-glass.css" />
+<link rel="stylesheet" href="../assets/demo.css" />
+<style>
+  .card { width: min(460px, 90vw); padding: 30px 32px; --lg-radius: 30px; }
+  .card h3 { margin: 0 0 22px; font-size: 19px; letter-spacing: -.01em; }
+  .field { margin-bottom: 26px; }
+  .field:last-child { margin-bottom: 0; }
+  .field .lbl { display: flex; justify-content: space-between; font-size: 13px; opacity: .75; margin-bottom: 10px; }
+  .field .lbl b { font-variant-numeric: tabular-nums; opacity: .95; }
+
+  .track { position: relative; height: 30px; border-radius: 999px; cursor: pointer; touch-action: none;
+           background: rgba(255,255,255,.14); box-shadow: 0 1px 3px rgba(0,0,0,.3) inset; }
+  .track .fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px;
+                 background: linear-gradient(90deg, rgba(255,255,255,.55), rgba(255,255,255,.85)); }
+  .track .thumb { position: absolute; top: 50%; width: 24px; height: 24px; border-radius: 50%; transform: translate(-50%,-50%);
+                  background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,.4); }
+  .track.blue .fill { background: linear-gradient(90deg,#4aa3ff,#7ac6ff); }
+  .track.green .fill { background: linear-gradient(90deg,#39d98a,#7ef0b6); }
+
+  .prog { position: relative; height: 12px; border-radius: 999px; overflow: hidden;
+          background: rgba(255,255,255,.14); box-shadow: 0 1px 2px rgba(0,0,0,.3) inset; }
+  .prog .bar { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px; background: linear-gradient(90deg,#ff9a3d,#ffd36e); }
+  .prog.stripe .bar { background-image: linear-gradient(90deg,#7a5cff,#b39cff); }
+</style>
+</head>
+<body>
+  <div class="wallpaper wp-ocean"><div class="bg-text"><span>Drag</span><span>Fill</span></div></div>
+  <div class="demo-label">07 · Slider &amp; Progress</div>
+
+  <div class="center">
+    <div class="lg-glass card" data-glass>
+      <h3>Sliders &amp; Progress</h3>
+
+      <div class="field">
+        <div class="lbl"><span>Brightness</span><b data-out>68%</b></div>
+        <div class="track" data-slider="68">
+          <div class="fill" style="width:68%"></div>
+          <div class="thumb" style="left:68%"></div>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="lbl"><span>Volume</span><b data-out>40%</b></div>
+        <div class="track blue" data-slider="40">
+          <div class="fill" style="width:40%"></div>
+          <div class="thumb" style="left:40%"></div>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="lbl"><span>Balance</span><b data-out>85%</b></div>
+        <div class="track green" data-slider="85">
+          <div class="fill" style="width:85%"></div>
+          <div class="thumb" style="left:85%"></div>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="lbl"><span>Downloading update…</span><b data-prog-out>0%</b></div>
+        <div class="prog"><div class="bar" data-prog style="width:0%"></div></div>
+      </div>
+
+      <div class="field">
+        <div class="lbl"><span>Syncing library</span><b>indeterminate</b></div>
+        <div class="prog stripe"><div class="bar" data-prog2 style="width:20%;left:0%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../packages/core/liquid-glass.js"></script>
+  <script>
+    LiquidGlass.init({ refraction:18, bezel:22, blur:3 });
+
+    document.querySelectorAll('[data-slider]').forEach(function(t){
+      var fill = t.querySelector('.fill'), thumb = t.querySelector('.thumb');
+      var out = t.parentElement.querySelector('[data-out]');
+      function set(e){
+        var r = t.getBoundingClientRect();
+        var x = (e.touches ? e.touches[0].clientX : e.clientX) - r.left;
+        var pct = Math.max(0, Math.min(100, x / r.width * 100));
+        fill.style.width = pct + '%'; thumb.style.left = pct + '%';
+        out.textContent = Math.round(pct) + '%';
+      }
+      var drag = false;
+      t.addEventListener('pointerdown', function(e){ drag = true; t.setPointerCapture(e.pointerId); set(e); });
+      t.addEventListener('pointermove', function(e){ if (drag) set(e); });
+      t.addEventListener('pointerup', function(){ drag = false; });
+    });
+
+    // Simulated download progress
+    var bar = document.querySelector('[data-prog]'), pout = document.querySelector('[data-prog-out]');
+    var p = 0;
+    setInterval(function(){ p = (p + 3) % 101; bar.style.width = p + '%'; pout.textContent = p + '%'; }, 260);
+
+    // Indeterminate sweep
+    var bar2 = document.querySelector('[data-prog2]'); var q = -20;
+    setInterval(function(){ q += 4; if (q > 100) q = -20; bar2.style.left = q + '%'; }, 60);
+  </script>
+</body>
+</html>

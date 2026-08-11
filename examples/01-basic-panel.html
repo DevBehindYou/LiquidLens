@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LiquidLens — 01 Basic Panel</title>
+<link rel="stylesheet" href="../packages/core/tokens.css" />
+<link rel="stylesheet" href="../packages/core/liquid-glass.css" />
+<link rel="stylesheet" href="../assets/demo.css" />
+<style>
+  .panel { --lg-radius: 32px; width: min(440px, 82vw); padding: 34px 36px; }
+  .panel h2 { margin: 0 0 8px; font-size: 24px; letter-spacing: -.01em; }
+  .panel p  { margin: 0; font-size: 15px; line-height: 1.5; color: var(--lg-fg-dim); }
+</style>
+</head>
+<body>
+  <div class="wallpaper wp-aurora"><div class="bg-text"><span>Glass</span><span>Bends</span></div></div>
+  <div class="demo-label">01 · Basic panel</div>
+
+  <div class="center">
+    <!-- The whole recipe: class="lg-glass" + data-glass. The engine measures the box,
+         builds a displacement map for its exact size/radius, and applies the material. -->
+    <div class="lg-glass panel" data-glass>
+      <h2>Liquid Glass</h2>
+      <p>Minimum viable glass: one element with <code>lg-glass</code> + <code>data-glass</code>.
+         The refraction band along the edge magnifies the text behind it. Resize the window —
+         the map regenerates automatically.</p>
+    </div>
+  </div>
+
+  <script src="../packages/core/liquid-glass.js"></script>
+  <script>LiquidGlass.init({ refraction: 22, bezel: 26, blur: 3 });</script>
+</body>
+</html>

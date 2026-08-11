@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LiquidLens — 12 Chips &amp; Badges</title>
+<link rel="stylesheet" href="../packages/core/tokens.css" />
+<link rel="stylesheet" href="../packages/core/liquid-glass.css" />
+<link rel="stylesheet" href="../assets/demo.css" />
+<style>
+  .board { width: min(680px, 92vw); }
+  .cap { font-size: 12px; letter-spacing: .06em; text-transform: uppercase; opacity: .55; margin: 0 0 14px; }
+  .grp { margin-bottom: 30px; } .grp:last-child { margin-bottom: 0; }
+  .flow { display: flex; flex-wrap: wrap; gap: 12px; }
+
+  .chip { display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; --lg-radius: 999px; cursor: pointer; font-size: 14px; font-weight: 600; }
+  .chip.on { --lg-tint-a: .34; box-shadow: var(--lg-shadow-inner), var(--lg-shadow-drop), 0 0 0 1px rgba(255,255,255,.3) inset; }
+  .chip .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; opacity: .85; }
+  .chip .rm { opacity: .6; font-size: 15px; }
+
+  .badge-row { display: flex; align-items: center; gap: 26px; flex-wrap: wrap; }
+  .app-ic { position: relative; width: 60px; height: 60px; border-radius: 16px; display: grid; place-items: center; font-size: 30px; }
+  .badge { position: absolute; top: -6px; right: -6px; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px;
+           background: #ff3b30; color: #fff; font-size: 12px; font-weight: 700; display: grid; place-items: center; box-shadow: 0 0 0 2px rgba(0,0,0,.25); }
+
+  .pill-status { display: inline-flex; align-items: center; gap: 7px; padding: 7px 13px; --lg-radius: 999px; font-size: 13px; font-weight: 600; }
+  .pill-status .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .d-green { background: #39d98a; } .d-amber { background: #ffb340; } .d-red { background: #ff453a; } .d-blue { background: #4aa3ff; }
+</style>
+</head>
+<body>
+  <div class="wallpaper wp-ocean"><div class="bg-text"><span>Tags</span><span>Filter</span></div></div>
+  <div class="demo-label">12 · Chips &amp; Badges</div>
+
+  <div class="center">
+    <div class="board stack" style="align-items:stretch;gap:0">
+      <div class="grp">
+        <p class="cap">Filter chips · toggle</p>
+        <div class="flow">
+          <div class="lg-glass chip on lg-tint-blue" data-glass data-chip><span class="dot"></span>Design</div>
+          <div class="lg-glass chip lg-tint-purple" data-glass data-chip><span class="dot"></span>Engineering</div>
+          <div class="lg-glass chip on lg-tint-green" data-glass data-chip><span class="dot"></span>Research</div>
+          <div class="lg-glass chip lg-tint-amber" data-glass data-chip><span class="dot"></span>Marketing</div>
+          <div class="lg-glass chip lg-tint-red" data-glass data-chip><span class="dot"></span>Urgent</div>
+          <div class="lg-glass chip" data-glass data-chip><span class="dot"></span>Archived</div>
+        </div>
+      </div>
+
+      <div class="grp">
+        <p class="cap">Removable tags</p>
+        <div class="flow" data-tags>
+          <div class="lg-glass chip lg-tint-blue" data-glass>swift <span class="rm" data-rm>×</span></div>
+          <div class="lg-glass chip lg-tint-green" data-glass>web <span class="rm" data-rm>×</span></div>
+          <div class="lg-glass chip lg-tint-purple" data-glass>glass <span class="rm" data-rm>×</span></div>
+          <div class="lg-glass chip lg-tint-amber" data-glass>ui-kit <span class="rm" data-rm>×</span></div>
+        </div>
+      </div>
+
+      <div class="grp">
+        <p class="cap">Icon badges</p>
+        <div class="badge-row">
+          <div class="lg-glass app-ic" data-glass>✉️<span class="badge">12</span></div>
+          <div class="lg-glass app-ic" data-glass>💬<span class="badge">3</span></div>
+          <div class="lg-glass app-ic" data-glass>📞<span class="badge">99+</span></div>
+          <div class="lg-glass app-ic" data-glass>⚙️<span class="badge" style="background:#4aa3ff;min-width:14px;height:14px;padding:0"></span></div>
+        </div>
+      </div>
+
+      <div class="grp" style="margin-bottom:0">
+        <p class="cap">Status pills</p>
+        <div class="flow">
+          <div class="lg-glass pill-status lg-tint-green" data-glass><span class="dot d-green"></span>Online</div>
+          <div class="lg-glass pill-status lg-tint-amber" data-glass><span class="dot d-amber"></span>Away</div>
+          <div class="lg-glass pill-status lg-tint-red" data-glass><span class="dot d-red"></span>Busy</div>
+          <div class="lg-glass pill-status lg-tint-blue" data-glass><span class="dot d-blue"></span>Syncing</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../packages/core/liquid-glass.js"></script>
+  <script>
+    LiquidGlass.init({ refraction:18, bezel:22, blur:3 });
+    document.querySelectorAll('[data-chip]').forEach(function(c){
+      c.addEventListener('click', function(){ c.classList.toggle('on'); });
+    });
+    document.querySelectorAll('[data-rm]').forEach(function(x){
+      x.addEventListener('click', function(e){
+        e.stopPropagation();
+        var chip = x.closest('.chip');
+        chip.style.transition = 'transform .25s, opacity .25s'; chip.style.transform = 'scale(.6)'; chip.style.opacity = '0';
+        setTimeout(function(){ chip.remove(); }, 260);
+      });
+    });
+  </script>
+</body>
+</html>

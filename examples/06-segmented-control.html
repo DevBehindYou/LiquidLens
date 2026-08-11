@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LiquidLens — 06 Segmented Control</title>
+<link rel="stylesheet" href="../packages/core/tokens.css" />
+<link rel="stylesheet" href="../packages/core/liquid-glass.css" />
+<link rel="stylesheet" href="../assets/demo.css" />
+<style>
+  .seg { position: relative; display: inline-flex; padding: 5px; --lg-radius: 20px; }
+  .seg .thumb {
+    position: absolute; top: 5px; bottom: 5px; left: 5px; border-radius: 15px; z-index: 1;
+    background: rgba(255,255,255,.28);
+    box-shadow: 0 2px 8px rgba(0,0,0,.25), 0 0 0 1px rgba(255,255,255,.3) inset;
+    transition: transform .32s var(--lg-ease), width .32s var(--lg-ease);
+  }
+  .seg button {
+    position: relative; z-index: 2; border: none; background: none; color: var(--lg-fg);
+    font: 600 15px/1 var(--lg-font); padding: 11px 22px; cursor: pointer; opacity: .7;
+    transition: opacity .25s; white-space: nowrap;
+  }
+  .seg button.active { opacity: 1; }
+  .seg svg { width: 17px; height: 17px; stroke: currentColor; fill: none; stroke-width: 2; vertical-align: -3px; margin-right: 6px; }
+  .panel { width: min(420px, 86vw); padding: 26px 28px; --lg-radius: 26px; text-align: center; }
+  .panel h3 { margin: 0 0 8px; font-size: 20px; }
+  .panel p { margin: 0; opacity: .72; font-size: 14px; line-height: 1.5; }
+</style>
+</head>
+<body>
+  <div class="wallpaper wp-mono"><div class="bg-text"><span>Switch</span><span>Slide</span></div></div>
+  <div class="demo-label">06 · Segmented Control</div>
+
+  <div class="center">
+    <div class="stack" style="gap:30px">
+      <div class="lg-glass seg" data-glass data-seg>
+        <div class="thumb"></div>
+        <button class="active" data-i="0">
+          <svg viewBox="0 0 24 24"><path d="M3 9l9-6 9 6v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Day
+        </button>
+        <button data-i="1">
+          <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Week
+        </button>
+        <button data-i="2">
+          <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M7 13h4M7 17h7"/></svg>Month
+        </button>
+        <button data-i="3">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Year
+        </button>
+      </div>
+
+      <div class="lg-glass panel" data-glass>
+        <h3 data-title>Day</h3>
+        <p data-body>A single day view. The glass thumb slides between segments with a springy easing, magnifying the backdrop beneath as it travels.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="../packages/core/liquid-glass.js"></script>
+  <script>
+    LiquidGlass.init({ refraction:18, bezel:22, blur:3 });
+    var copy = [
+      ['Day','A single day view. The glass thumb slides between segments with a springy easing, magnifying the backdrop beneath as it travels.'],
+      ['Week','Seven days at a glance. Segmented controls keep mutually-exclusive choices compact and tactile.'],
+      ['Month','A full month grid. Notice the active label brightens while the others dim to 70% opacity.'],
+      ['Year','Twelve months summarized. The indicator width adapts to each segment automatically.']
+    ];
+    var seg = document.querySelector('[data-seg]');
+    var thumb = seg.querySelector('.thumb');
+    var btns = seg.querySelectorAll('button');
+    var title = document.querySelector('[data-title]');
+    var body = document.querySelector('[data-body]');
+    function move(btn){
+      btns.forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      thumb.style.width = btn.offsetWidth + 'px';
+      thumb.style.transform = 'translateX(' + (btn.offsetLeft - 5) + 'px)';
+      var i = +btn.dataset.i;
+      title.textContent = copy[i][0]; body.textContent = copy[i][1];
+    }
+    btns.forEach(function(b){ b.addEventListener('click', function(){ move(b); }); });
+    window.addEventListener('load', function(){ move(btns[0]); });
+    window.addEventListener('resize', function(){ move(seg.querySelector('button.active')); });
+  </script>
+</body>
+</html>

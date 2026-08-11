@@ -1,0 +1,652 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>LiquidLens — Playground</title>
+<style>
+/* ===== tokens.css ===== */
+/*!
+ * LiquidLens — tokens.css
+ * Design tokens for the Liquid Glass system. Import BEFORE liquid-glass.css.
+ * Override any of these on :root (or a scope) to re-theme without touching the engine.
+ */
+:root {
+  /* ---- material parameters (mirror the JS defaults; JS updates the live ones) ---- */
+  --lg-blur: 3px;            /* backdrop blur */
+  --lg-sat: 1.8;             /* backdrop saturation */
+  --lg-spec: 0.9;            /* specular intensity 0..1.5 */
+  --lg-tint-h: 220;          /* tint hue */
+  --lg-tint-s: 40%;          /* tint saturation */
+  --lg-tint-l: 70%;          /* tint lightness */
+  --lg-tint-a: 0.10;         /* tint alpha */
+
+  /* ---- dynamic (written by the engine at runtime) ---- */
+  --lg-lx: 32%;              /* specular light x */
+  --lg-ly: 12%;              /* specular light y */
+  --lg-edge: 140deg;         /* rim sweep angle */
+
+  /* ---- shape ---- */
+  --lg-radius: 28px;         /* default corner radius */
+  --lg-radius-sm: 16px;
+  --lg-radius-lg: 40px;
+  --lg-radius-pill: 999px;
+
+  /* ---- depth (adaptive shadow + inner light) ---- */
+  --lg-shadow-drop: 0 12px 34px rgba(0,0,0,.28), 0 2px 8px rgba(0,0,0,.20);
+  --lg-shadow-inner: 0 1px 1px rgba(255,255,255,.35) inset, 0 -1px 1px rgba(255,255,255,.10) inset;
+
+  /* ---- chromatic edge (fake dispersion) ---- */
+  --lg-chroma-cool: rgba(120,180,255,.20);
+  --lg-chroma-warm: rgba(255,120,200,.18);
+
+  /* ---- spacing scale (for building demos consistently) ---- */
+  --lg-space-1: 6px;  --lg-space-2: 10px; --lg-space-3: 14px;
+  --lg-space-4: 18px; --lg-space-5: 24px; --lg-space-6: 34px;
+
+  /* ---- type ---- */
+  --lg-font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --lg-fg: #fff;             /* foreground on glass (keep high-contrast) */
+  --lg-fg-dim: rgba(255,255,255,.7);
+
+  /* ---- motion ---- */
+  --lg-ease: cubic-bezier(.2, 1, .3, 1);   /* springy Apple-ish easing */
+  --lg-dur: .35s;
+}
+
+/* A conventional "dark environment" scope (optional). */
+[data-lg-env="dark"] {
+  --lg-tint-l: 55%;
+  --lg-tint-a: 0.12;
+  --lg-shadow-drop: 0 14px 40px rgba(0,0,0,.5), 0 2px 8px rgba(0,0,0,.35);
+}
+
+/* ===== liquid-glass.css ===== */
+/*!
+ * LiquidLens — liquid-glass.css (the visual layers of the material)
+ * Import order:  tokens.css  →  liquid-glass.css  →  your styles.
+ * Pair with liquid-glass.js (it injects the refraction backdrop-filter).
+ *
+ * MATERIAL ANATOMY (bottom → top), see docs/03-material-anatomy.md
+ *   backdrop-filter : blur + saturate + url(#displacement)   ← engine = refraction
+ *   background      : hsla tint                              ← environment color
+ *   ::after         : moving specular highlight (pointer / tilt)
+ *   ::before        : specular rim + chromatic aberration
+ *   box-shadow      : inner light + adaptive drop shadow (depth)
+ *   > *             : your content, lifted above the glass layers
+ */
+
+/* ============ THE MATERIAL ============ */
+.lg-glass {
+  position: relative;
+  border-radius: var(--lg-radius);
+  color: var(--lg-fg);
+  font-family: var(--lg-font);
+  background: hsla(var(--lg-tint-h), var(--lg-tint-s), var(--lg-tint-l), var(--lg-tint-a));
+  -webkit-backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-sat));
+          backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-sat));
+  box-shadow: var(--lg-shadow-inner), var(--lg-shadow-drop);
+  isolation: isolate;
+  transition: transform var(--lg-dur) var(--lg-ease), box-shadow var(--lg-dur) ease, background .3s ease;
+  will-change: transform;
+}
+
+/* Specular rim + subtle chromatic aberration along the edge */
+.lg-glass::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  padding: 1px; z-index: 2;
+  background: linear-gradient(var(--lg-edge),
+      rgba(255,255,255,calc(.9 * var(--lg-spec))) 0%,
+      rgba(255,255,255,.05) 22%,
+      rgba(255,255,255,0) 50%,
+      rgba(255,255,255,.05) 78%,
+      rgba(255,255,255,calc(.55 * var(--lg-spec))) 100%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  box-shadow:
+    inset 0 0 0 .5px rgba(255,255,255,.25),
+    inset 1px 1px 6px var(--lg-chroma-cool),
+    inset -1px -1px 6px var(--lg-chroma-warm);
+}
+
+/* Moving specular highlight — reacts to pointer / device motion */
+.lg-glass::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 1;
+  background: radial-gradient(70% 55% at var(--lg-lx) var(--lg-ly),
+      rgba(255,255,255,calc(.55 * var(--lg-spec))) 0%,
+      rgba(255,255,255,.06) 35%,
+      rgba(255,255,255,0) 60%);
+  mix-blend-mode: screen;
+  transition: background .12s linear;
+}
+
+.lg-glass > * { position: relative; z-index: 3; }
+
+/* ============ CLEAR VARIANT ============ */
+.lg-clear {
+  background: hsla(var(--lg-tint-h), 30%, 60%, calc(var(--lg-tint-a) * .35));
+  -webkit-backdrop-filter: blur(1px) saturate(1.4);
+          backdrop-filter: blur(1px) saturate(1.4);
+}
+.lg-scrim {
+  position: absolute; inset: 0; border-radius: inherit; z-index: 2; pointer-events: none;
+  background: linear-gradient(180deg, rgba(0,0,0,.28), rgba(0,0,0,.10));
+}
+
+/* ============ TINT HELPERS (semantic, subtle) ============ */
+.lg-tint-blue   { --lg-tint-h: 212; --lg-tint-a: .16; }
+.lg-tint-green  { --lg-tint-h: 145; --lg-tint-a: .16; }
+.lg-tint-red    { --lg-tint-h: 2;   --lg-tint-a: .16; }
+.lg-tint-purple { --lg-tint-h: 275; --lg-tint-a: .16; }
+.lg-tint-amber  { --lg-tint-h: 38;  --lg-tint-a: .18; }
+
+/* ============ SHAPE HELPERS ============ */
+.lg-pill   { --lg-radius: var(--lg-radius-pill); }
+.lg-circle { --lg-radius: 50%; aspect-ratio: 1; }
+.lg-sm     { --lg-radius: var(--lg-radius-sm); }
+.lg-lg     { --lg-radius: var(--lg-radius-lg); }
+
+/* ============ COMPONENT PRIMITIVES ============ */
+.lg-btn {
+  --lg-radius: 22px; display: inline-flex; align-items: center; gap: 8px;
+  padding: 13px 24px; font: 600 16px/1 var(--lg-font); border: none; color: var(--lg-fg); cursor: pointer;
+}
+.lg-toolbar { display: inline-flex; gap: 12px; padding: 10px 14px; align-items: center; --lg-radius: 26px; }
+.lg-card    { padding: var(--lg-space-5); --lg-radius: 30px; }
+
+/* ============ INTERACTION ============ */
+.lg-press { cursor: pointer; }
+.lg-press:active { transform: scale(.96); }
+.lg-press:active::after {
+  background: radial-gradient(70% 60% at 50% 50%,
+      rgba(255,255,255,.7) 0%, rgba(255,255,255,.15) 45%, rgba(255,255,255,0) 70%);
+}
+/* Interactive glow that lifts on hover (subtle) */
+.lg-interactive { transition: transform var(--lg-dur) var(--lg-ease), box-shadow var(--lg-dur) ease; }
+.lg-interactive:hover { transform: translateY(-2px); }
+
+/* ============ MORPH CONTAINER (glass elements that flow together) ============ */
+.lg-morph { display: inline-flex; gap: 10px; }
+.lg-morph > .lg-glass { transition: all var(--lg-dur) var(--lg-ease); }
+
+/* ============ ACCESSIBILITY (mirrors Apple's automatic adaptation) ============ */
+@media (prefers-reduced-transparency: reduce) {
+  .lg-glass {
+    background: rgba(28, 28, 36, .9);
+    -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: 0 8px 24px rgba(0,0,0,.4);
+  }
+  .lg-glass::before, .lg-glass::after { display: none; }
+  .lg-clear { background: rgba(28, 28, 36, .82); }
+}
+@media (prefers-contrast: more) {
+  .lg-glass { box-shadow: var(--lg-shadow-inner), var(--lg-shadow-drop), inset 0 0 0 1px rgba(255,255,255,.6); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lg-glass, .lg-glass::after, .lg-interactive { transition: none; }
+}
+
+/* ===== shared ===== */
+
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;width:100%;font-family:var(--lg-font);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body{overflow:hidden}
+.sw{width:52px;height:32px;border-radius:999px;background:rgba(255,255,255,.22);position:relative;cursor:pointer;transition:background .35s var(--lg-ease);flex:none;box-shadow:inset 0 0 0 .5px rgba(255,255,255,.25)}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:26px;height:26px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.35);transition:transform .35s var(--lg-ease)}
+.sw.on{background:#34c759}
+.sw.on::after{transform:translateX(20px)}
+
+/* ===== artifact ===== */
+
+#wall{position:fixed;inset:0;transition:background .7s var(--lg-ease);z-index:0;
+ background:
+  radial-gradient(1200px 820px at 12% 18%, #ff7eb3 0%, rgba(255,126,179,0) 55%),
+  radial-gradient(1000px 900px at 88% 12%, #64f0ff 0%, rgba(100,240,255,0) 52%),
+  radial-gradient(1200px 1000px at 78% 92%, #ffb457 0%, rgba(255,180,87,0) 50%),
+  radial-gradient(1000px 1000px at 18% 88%, #7b5cff 0%, rgba(123,92,255,0) 55%),
+  linear-gradient(135deg,#3a1c71 0%,#5f72be 55%,#3a1c71 100%);}
+body[data-lg-env="dark"] #wall{
+ background:
+  radial-gradient(1100px 800px at 15% 20%, #3b1d6e 0%, rgba(59,29,110,0) 55%),
+  radial-gradient(1000px 900px at 85% 12%, #0d4a6b 0%, rgba(13,74,107,0) 52%),
+  radial-gradient(1100px 1000px at 80% 90%, #7a3d12 0%, rgba(122,61,18,0) 52%),
+  radial-gradient(1000px 1000px at 20% 90%, #241a4d 0%, rgba(36,26,77,0) 55%),
+  linear-gradient(135deg,#0a0a1a 0%,#141433 55%,#05050f 100%);}
+.bgtext{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:1;
+ font-weight:800;font-size:23vw;line-height:.8;color:rgba(255,255,255,.10);letter-spacing:-.05em;
+ pointer-events:none;user-select:none;white-space:nowrap}
+.tagline{position:fixed;left:0;right:0;top:calc(50% + 12vw);text-align:center;z-index:1;pointer-events:none;
+ font-size:15px;letter-spacing:.42em;text-transform:uppercase;color:rgba(255,255,255,.55)}
+.stage{position:fixed;inset:0;z-index:2}
+.panel{position:absolute;touch-action:none;cursor:grab}
+.panel.dragging{cursor:grabbing}
+.hint{position:fixed;left:24px;bottom:22px;z-index:2;color:rgba(255,255,255,.7);font-size:13px;letter-spacing:.02em}
+
+/* control-center card */
+.cc{width:300px;padding:20px}
+.cc h4{margin:0 0 14px;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--lg-fg-dim);font-weight:700}
+.row{display:flex;align-items:center;justify-content:space-between;padding:11px 4px;gap:12px}
+.row+.row{border-top:1px solid rgba(255,255,255,.10)}
+.row .lbl{display:flex;align-items:center;gap:12px;font-size:16px;font-weight:600}
+.row .em{font-size:20px}
+
+/* dock */
+.dock{display:flex;gap:14px;padding:14px 18px}
+.dock .app{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:28px;
+ box-shadow:0 6px 16px rgba(0,0,0,.28);transition:transform .3s var(--lg-ease);cursor:pointer}
+.dock .app:hover{transform:translateY(-6px) scale(1.05)}
+.a1{background:linear-gradient(160deg,#5ec8ff,#0a84ff)}
+.a2{background:linear-gradient(160deg,#ff8fb1,#ff375f)}
+.a3{background:linear-gradient(160deg,#ffe08a,#ff9f0a)}
+.a4{background:linear-gradient(160deg,#8ce99a,#34c759)}
+.a5{background:linear-gradient(160deg,#c9a8ff,#af52de)}
+
+/* button cluster */
+.btns{display:flex;flex-direction:column;gap:14px;align-items:flex-start}
+.btnrow{display:flex;gap:14px}
+
+/* notification */
+.note{width:330px;padding:16px 18px;display:flex;gap:14px;align-items:flex-start}
+.note .ico{width:40px;height:40px;border-radius:11px;flex:none;display:flex;align-items:center;justify-content:center;font-size:22px;background:linear-gradient(160deg,#5ec8ff,#0a84ff);box-shadow:0 4px 12px rgba(0,0,0,.3)}
+.note .body{flex:1;min-width:0}
+.note .top{display:flex;justify-content:space-between;font-size:13px;color:var(--lg-fg-dim)}
+.note .ttl{font-weight:700;font-size:15px;margin:2px 0}
+.note .msg{font-size:14px;color:rgba(255,255,255,.85);line-height:1.35}
+
+/* control panel top-right */
+.controls{position:fixed;top:22px;right:22px;z-index:6;width:290px;padding:20px 20px 22px}
+.controls h3{margin:0 0 4px;font-size:17px;font-weight:800;letter-spacing:-.01em;display:flex;align-items:center;gap:8px}
+.controls .sub{margin:0 0 16px;font-size:12px;color:var(--lg-fg-dim);letter-spacing:.03em}
+.ctl{margin-bottom:13px}
+.ctl .top{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:6px;color:rgba(255,255,255,.9);font-weight:600}
+.ctl .top b{color:#fff;font-variant-numeric:tabular-nums;font-weight:700}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:999px;outline:none;
+ background:rgba(255,255,255,.22);cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:#fff;
+ box-shadow:0 2px 6px rgba(0,0,0,.4);border:none;cursor:grab}
+.envrow{display:flex;align-items:center;justify-content:space-between;margin-top:16px;padding-top:15px;border-top:1px solid rgba(255,255,255,.12)}
+.envrow span{font-size:14px;font-weight:600}
+#env{--lg-radius:999px;padding:9px 20px;font-weight:700;font-size:14px}
+
+</style>
+</head>
+<body>
+
+<div id="wall"></div>
+<div class="bgtext">LiquidLens</div>
+<div class="tagline">Liquid Glass, engineered for the web</div>
+
+<div class="stage">
+  <div class="panel lg-glass lg-card cc" data-glass style="left:60px;top:130px;--lg-radius:30px">
+    <h4>Control Center</h4>
+    <div class="row"><div class="lbl"><span class="em">&#128246;</span> Wi-Fi</div><div class="sw on" data-toggle></div></div>
+    <div class="row"><div class="lbl"><span class="em">&#128290;</span> Bluetooth</div><div class="sw on" data-toggle></div></div>
+    <div class="row"><div class="lbl"><span class="em">&#9992;&#65039;</span> Airplane Mode</div><div class="sw" data-toggle></div></div>
+    <div class="row"><div class="lbl"><span class="em">&#127769;</span> Do Not Disturb</div><div class="sw" data-toggle></div></div>
+  </div>
+
+  <div class="panel lg-glass lg-toolbar dock" data-glass style="left:70px;top:470px;--lg-radius:30px">
+    <div class="app a1">&#9993;&#65039;</div>
+    <div class="app a2">&#127925;</div>
+    <div class="app a3">&#128247;</div>
+    <div class="app a4">&#128241;</div>
+    <div class="app a5">&#128266;</div>
+  </div>
+
+  <div class="panel btns" style="left:430px;top:150px">
+    <div class="btnrow">
+      <button class="lg-glass lg-btn lg-press lg-interactive lg-tint-blue" data-glass>&#9889; Action</button>
+      <button class="lg-glass lg-btn lg-press lg-interactive lg-tint-green" data-glass>&#10003; Confirm</button>
+    </div>
+    <div class="btnrow">
+      <button class="lg-glass lg-btn lg-press lg-interactive lg-tint-purple" data-glass>&#9733; Favorite</button>
+      <button class="lg-glass lg-clear lg-btn lg-press lg-interactive" data-glass data-glass-variant="clear"><span class="lg-scrim"></span>&#128167; Clear glass</button>
+    </div>
+  </div>
+
+  <div class="panel lg-glass note" data-glass style="left:440px;top:340px;--lg-radius:24px">
+    <div class="ico">&#128276;</div>
+    <div class="body">
+      <div class="top"><span>LiquidLens</span><span>now</span></div>
+      <div class="ttl">Drag me anywhere</div>
+      <div class="msg">Every panel is a live glass surface. Move it over the wallpaper and watch the edges refract.</div>
+    </div>
+  </div>
+</div>
+
+<aside class="controls lg-glass" data-glass data-lg-blur="2">
+  <h3>&#9881;&#65039; Material Lab</h3>
+  <p class="sub">Adjust the engine in real time</p>
+  <div class="ctl"><div class="top"><span>Refraction</span><b id="refractionv"></b></div><input id="refraction" type="range" min="0" max="40" step="1" value="20"></div>
+  <div class="ctl"><div class="top"><span>Bezel</span><b id="bezelv"></b></div><input id="bezel" type="range" min="4" max="60" step="1" value="26"></div>
+  <div class="ctl"><div class="top"><span>Blur</span><b id="blurv"></b></div><input id="blur" type="range" min="0" max="4" step="0.1" value="2"></div>
+  <div class="ctl"><div class="top"><span>Saturation</span><b id="saturationv"></b></div><input id="saturation" type="range" min="1" max="3" step="0.05" value="1.9"></div>
+  <div class="ctl"><div class="top"><span>Specular</span><b id="specularv"></b></div><input id="specular" type="range" min="0" max="1.5" step="0.05" value="0.95"></div>
+  <div class="ctl"><div class="top"><span>Tint hue</span><b id="tintHuev"></b></div><input id="tintHue" type="range" min="0" max="360" step="1" value="220"></div>
+  <div class="ctl"><div class="top"><span>Tint opacity</span><b id="tintOpacityv"></b></div><input id="tintOpacity" type="range" min="0" max="0.4" step="0.01" value="0.10"></div>
+  <div class="envrow"><span>Environment</span><button id="env" class="lg-glass lg-press" data-glass>Light</button></div>
+</aside>
+
+<div class="hint">Drag the panels &middot; tweak the Material Lab &middot; toggle the environment</div>
+
+<script>
+/*!
+ * LiquidLens — liquid-glass.js (core engine)  v1.0
+ * =====================================================================
+ * Apple-style "Liquid Glass" material for the web. Zero dependencies.
+ * Produces GENUINE edge refraction by generating a per-element SVG
+ * displacement map and using it as a `backdrop-filter`, then layering
+ * translucency, specular highlights, chromatic edge, and adaptive depth.
+ *
+ * Works as: a plain <script> global (window.LiquidGlass / window.LiquidLens),
+ * a CommonJS module, or an ES module (see the exports at the bottom).
+ *
+ * ── QUICK START ──────────────────────────────────────────────────────
+ *   <link rel="stylesheet" href="liquid-glass.css">
+ *   <div class="lg-glass" data-glass style="--lg-radius:28px;padding:24px">Hi</div>
+ *   <script src="liquid-glass.js"><\/script>
+ *   <script>LiquidGlass.init({ refraction:18, bezel:22, blur:3 });<\/script>
+ *
+ * ── PUBLIC API ───────────────────────────────────────────────────────
+ *   init(options?)      Scan [data-glass], apply, wire resize + pointer + observer. Call once.
+ *   apply(el, opts?)    (Re)apply to one element (reads its live size + radius + data-* overrides).
+ *   applyAll()          Re-apply to every [data-glass] element.
+ *   set(partial)        Merge params into global state, update CSS vars, re-render. For live controls.
+ *   refresh(el)         Alias of apply(el); use after mutating an element's size.
+ *   destroy()           Remove observers/listeners and injected filters.
+ *   state               Current global params.
+ *   makeDisplacementMap(w,h,radius,bezel) -> dataURL  (advanced / testing)
+ *
+ * ── PER-ELEMENT OVERRIDES (data attributes) ──────────────────────────
+ *   data-lg-refraction, data-lg-bezel, data-lg-blur, data-lg-saturation
+ *   data-glass-variant="clear"          (same as adding class .lg-clear)
+ *   Example: <div class="lg-glass" data-glass data-lg-refraction="34" data-lg-bezel="30">
+ *
+ * ── THE PHYSICS (see docs/02-optics-and-physics.md) ──────────────────
+ *   Edge = convex squircle  height(x) = (1 - (1-x)^4)^(1/4).
+ *   Across the bezel: slope -> incidence angle -> Snell (air n=1 -> glass n=1.5)
+ *   -> ray deflection = displacement magnitude. Direction = outward SDF normal.
+ *   Encoded into R (x) / G (y) channels (128 = none). feDisplacementMap then
+ *   shifts each backdrop pixel by ((R-128)/127, (G-128)/127) * scale.
+ *
+ * ── BROWSER SUPPORT ──────────────────────────────────────────────────
+ *   SVG-filter-as-backdrop-filter refraction: Chromium (Chrome/Edge/Arc/Brave/Opera).
+ *   Safari & Firefox ignore the filter and fall back to blur + specular (still glassy).
+ */
+(function (root, factory) {
+  var api = factory();
+  if (typeof module === 'object' && module.exports) module.exports = api; // CommonJS
+  if (root) {
+    root.LiquidGlass = api;                                               // global
+    root.LiquidLens = api;                                                // brand alias
+  }
+})(typeof globalThis !== 'undefined' ? globalThis
+   : typeof self !== 'undefined' ? self
+   : typeof window !== 'undefined' ? window : this, function () {
+  'use strict';
+
+  var NS = 'http://www.w3.org/2000/svg';
+  var filterRoot = null;
+  var uid = 0;
+  var observers = [];
+
+  var defaults = {
+    refraction: 18,   // feDisplacementMap scale (px) — edge bend strength
+    bezel: 22,        // width (px) of the refracting edge band
+    blur: 3,          // backdrop blur (px) — keep LOW (0-4) or refraction is lost
+    saturation: 1.8,  // backdrop saturate() multiplier
+    specular: 0.9,    // rim/highlight intensity 0..1.5 (drives CSS var --lg-spec)
+    tintHue: 220,     // HSL hue of tint 0..360
+    tintOpacity: 0.10,// tint alpha 0..0.4
+    quality: 360,     // max displacement-map dimension (perf cap)
+    tilt: false       // if true, specular tracks DeviceOrientation (mobile)
+  };
+  var state = assign({}, defaults);
+
+  function assign(t) {
+    for (var i = 1; i < arguments.length; i++) {
+      var s = arguments[i]; if (!s) continue;
+      for (var k in s) if (Object.prototype.hasOwnProperty.call(s, k)) t[k] = s[k];
+    }
+    return t;
+  }
+  function clamp(v, a, b) { return Math.min(Math.max(v, a), b); }
+  function num(v, fallback) { var n = parseFloat(v); return isNaN(n) ? fallback : n; }
+
+  /* ---- 1D refraction profile of a convex squircle edge (normalized 0..1) ---- */
+  function buildProfile(samples) {
+    var f = function (u) { u = clamp(u, 0, 1); return Math.pow(1 - Math.pow(1 - u, 4), 1 / 4); };
+    var eps = 0.001, n = 1 / 1.5, arr = [], max = 0;
+    for (var i = 0; i <= samples; i++) {
+      var t = i / samples;
+      var slope = (f(t + eps) - f(t - eps)) / (2 * eps);
+      var th1 = Math.atan(slope);
+      var th2 = Math.asin(Math.min(1, n * Math.sin(th1)));
+      var d = Math.tan(th1 - th2);
+      arr.push(d); if (d > max) max = d;
+    }
+    return arr.map(function (v) { return max > 0 ? v / max : 0; });
+  }
+  var PROFILE = buildProfile(128);
+  function sampleProfile(t) {
+    var x = clamp(t, 0, 1) * (PROFILE.length - 1);
+    var i = Math.floor(x), fr = x - i;
+    return PROFILE[i] * (1 - fr) + PROFILE[Math.min(i + 1, PROFILE.length - 1)] * fr;
+  }
+
+  /* ---- signed distance to a rounded rectangle (negative = inside) ---- */
+  function sdRoundRect(x, y, w, h, r) {
+    var qx = Math.abs(x - w / 2) - (w / 2 - r);
+    var qy = Math.abs(y - h / 2) - (h / 2 - r);
+    var ax = Math.max(qx, 0), ay = Math.max(qy, 0);
+    return Math.hypot(ax, ay) + Math.min(Math.max(qx, qy), 0) - r;
+  }
+
+  /* ---- generate the displacement-map bitmap as a data URL ---- */
+  function makeDisplacementMap(w, h, radius, bezel) {
+    var s = Math.min(1, state.quality / Math.max(w, h));
+    var W = Math.max(8, Math.round(w * s)), H = Math.max(8, Math.round(h * s));
+    var R = Math.max(1, radius * s), B = Math.max(2, bezel * s);
+    var c = document.createElement('canvas'); c.width = W; c.height = H;
+    var ctx = c.getContext('2d'); var img = ctx.createImageData(W, H); var d = img.data;
+    for (var y = 0; y < H; y++) for (var x = 0; x < W; x++) {
+      var i = (y * W + x) * 4;
+      var dist = sdRoundRect(x + 0.5, y + 0.5, W, H, R);
+      var depth = -dist, rx = 0, ry = 0;
+      if (dist < 0 && depth < B) {
+        var t = depth / B, mag = sampleProfile(t);
+        var gx = sdRoundRect(x + 1.5, y + 0.5, W, H, R) - sdRoundRect(x - 0.5, y + 0.5, W, H, R);
+        var gy = sdRoundRect(x + 0.5, y + 1.5, W, H, R) - sdRoundRect(x + 0.5, y - 0.5, W, H, R);
+        var gl = Math.hypot(gx, gy) || 1;
+        rx = (gx / gl) * mag; ry = (gy / gl) * mag;   // outward normal -> magnifying lens
+      }
+      d[i] = 128 + rx * 127; d[i + 1] = 128 + ry * 127; d[i + 2] = 128; d[i + 3] = 255;
+    }
+    ctx.putImageData(img, 0, 0);
+    return c.toDataURL();
+  }
+
+  function ensureRoot() {
+    if (filterRoot && document.body.contains(filterRoot)) return;
+    filterRoot = document.createElementNS(NS, 'svg');
+    filterRoot.setAttribute('aria-hidden', 'true');
+    filterRoot.setAttribute('id', 'lg-filter-root');
+    filterRoot.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden;pointer-events:none';
+    document.body.appendChild(filterRoot);
+  }
+  function radiusOf(el) { return parseFloat(getComputedStyle(el).borderTopLeftRadius) || 24; }
+  function reducedTransparency() {
+    return window.matchMedia && window.matchMedia('(prefers-reduced-transparency: reduce)').matches;
+  }
+
+  /* ---- apply the material to a single element ---- */
+  function apply(el, opts) {
+    if (reducedTransparency()) return; // CSS provides an opaque fallback; skip GPU work
+    ensureRoot();
+    var ds = el.dataset || {};
+    var o = assign({}, state, opts, {
+      refraction: num(ds.lgRefraction, (opts && opts.refraction) != null ? opts.refraction : state.refraction),
+      bezel:      num(ds.lgBezel,      (opts && opts.bezel)      != null ? opts.bezel      : state.bezel),
+      blur:       num(ds.lgBlur,       (opts && opts.blur)       != null ? opts.blur       : state.blur),
+      saturation: num(ds.lgSaturation, (opts && opts.saturation) != null ? opts.saturation : state.saturation)
+    });
+    var rect = el.getBoundingClientRect();
+    var w = Math.round(rect.width), h = Math.round(rect.height);
+    if (w < 4 || h < 4) return;
+    var isClear = el.classList.contains('lg-clear') || ds.glassVariant === 'clear';
+    var radius = Math.min(radiusOf(el), Math.min(w, h) / 2);
+    var bezel = Math.min(o.bezel, Math.min(w, h) / 2 - 1);
+    var scale = isClear ? o.refraction * 0.5 : o.refraction;
+
+    var id = ds.lgId; if (!id) { id = 'lg' + (uid++); el.dataset.lgId = id; }
+    var map = makeDisplacementMap(w, h, radius, Math.max(2, bezel));
+
+    var f = document.getElementById(id); if (f) f.remove();
+    f = document.createElementNS(NS, 'filter');
+    f.setAttribute('id', id);
+    f.setAttribute('color-interpolation-filters', 'sRGB');
+    f.setAttribute('x', '0'); f.setAttribute('y', '0');
+    f.setAttribute('width', '100%'); f.setAttribute('height', '100%');
+    f.innerHTML =
+      '<feImage href="' + map + '" x="0" y="0" width="' + w + '" height="' + h + '" preserveAspectRatio="none" result="m"/>' +
+      '<feDisplacementMap in="SourceGraphic" in2="m" scale="' + scale + '" xChannelSelector="R" yChannelSelector="G"/>';
+    filterRoot.appendChild(f);
+
+    var blur = isClear ? Math.min(o.blur, 2) : o.blur;
+    var sat = isClear ? 1.4 : o.saturation;
+    var fx = 'blur(' + blur + 'px) saturate(' + sat + ') url(#' + id + ')';
+    el.style.webkitBackdropFilter = fx;
+    el.style.backdropFilter = fx;
+  }
+  function refresh(el) { apply(el); }
+
+  function setVars() {
+    var r = document.documentElement.style;
+    r.setProperty('--lg-blur', state.blur + 'px');
+    r.setProperty('--lg-sat', state.saturation);
+    r.setProperty('--lg-spec', state.specular);
+    r.setProperty('--lg-tint-h', state.tintHue);
+    r.setProperty('--lg-tint-a', state.tintOpacity);
+  }
+
+  var raf = null;
+  function applyAll() { var list = document.querySelectorAll('[data-glass]'); for (var i = 0; i < list.length; i++) apply(list[i]); }
+  function schedule() { if (raf) cancelAnimationFrame(raf); raf = requestAnimationFrame(applyAll); }
+  function set(partial) { assign(state, partial); setVars(); schedule(); }
+
+  var pointerBound = false;
+  function onPointer(e) {
+    var r = document.documentElement.style;
+    r.setProperty('--lg-lx', (e.clientX / innerWidth * 100).toFixed(1) + '%');
+    r.setProperty('--lg-ly', (e.clientY / innerHeight * 100).toFixed(1) + '%');
+    r.setProperty('--lg-edge', (90 + (e.clientX / innerWidth - 0.5) * 80).toFixed(0) + 'deg');
+  }
+  function onTilt(e) {
+    var r = document.documentElement.style;
+    var gx = clamp((e.gamma || 0) / 45, -1, 1), gy = clamp((e.beta || 0) / 45, -1, 1);
+    r.setProperty('--lg-lx', (50 + gx * 40).toFixed(1) + '%');
+    r.setProperty('--lg-ly', (30 + gy * 40).toFixed(1) + '%');
+  }
+  function bindMotion() {
+    if (pointerBound) return; pointerBound = true;
+    window.addEventListener('pointermove', onPointer);
+    if (state.tilt && window.DeviceOrientationEvent) window.addEventListener('deviceorientation', onTilt);
+  }
+
+  function init(opts) {
+    assign(state, opts); setVars(); bindMotion();
+    var run = function () { applyAll(); setTimeout(applyAll, 150); };
+    if (document.readyState === 'complete') run(); else window.addEventListener('load', run);
+    window.addEventListener('resize', schedule);
+    if ('ResizeObserver' in window) {
+      var ro = new ResizeObserver(schedule); observers.push(ro);
+      var list = document.querySelectorAll('[data-glass]');
+      for (var i = 0; i < list.length; i++) ro.observe(list[i]);
+    }
+    if ('MutationObserver' in window) {
+      var mo = new MutationObserver(function (muts) {
+        for (var j = 0; j < muts.length; j++) {
+          var added = muts[j].addedNodes;
+          for (var k = 0; k < added.length; k++) {
+            var node = added[k];
+            if (node.nodeType === 1 && (node.matches && node.matches('[data-glass]'))) { apply(node); }
+          }
+        }
+      });
+      mo.observe(document.body, { childList: true, subtree: true }); observers.push(mo);
+    }
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(schedule);
+    return api;
+  }
+
+  function destroy() {
+    for (var i = 0; i < observers.length; i++) observers[i].disconnect();
+    observers = [];
+    window.removeEventListener('pointermove', onPointer);
+    window.removeEventListener('deviceorientation', onTilt);
+    if (filterRoot) { filterRoot.remove(); filterRoot = null; }
+    pointerBound = false;
+  }
+
+  var api = {
+    init: init, apply: apply, applyAll: applyAll, set: set, refresh: refresh,
+    destroy: destroy, state: state, makeDisplacementMap: makeDisplacementMap, _defaults: defaults
+  };
+  return api;
+});
+
+</script>
+<script>
+
+LiquidGlass.init({ refraction:20, bezel:26, blur:2, saturation:1.9, specular:0.95, tintHue:220, tintOpacity:0.10 });
+
+function makeDraggable(el){
+  var active=false,sx=0,sy=0,ox=0,oy=0;
+  el.addEventListener('pointerdown',function(e){
+    if(e.target.closest('input,button,.sw,.app')) return;
+    active=true; el.setPointerCapture(e.pointerId);
+    var r=el.getBoundingClientRect(); ox=r.left; oy=r.top; sx=e.clientX; sy=e.clientY;
+    el.style.zIndex=50; el.classList.add('dragging');
+  });
+  el.addEventListener('pointermove',function(e){
+    if(!active) return;
+    el.style.left=(ox+e.clientX-sx)+'px';
+    el.style.top=(oy+e.clientY-sy)+'px';
+    el.style.right='auto'; el.style.bottom='auto';
+  });
+  function end(){active=false; el.classList.remove('dragging');}
+  el.addEventListener('pointerup',end);
+  el.addEventListener('pointercancel',end);
+}
+document.querySelectorAll('.panel').forEach(makeDraggable);
+
+document.querySelectorAll('[data-toggle]').forEach(function(t){
+  t.addEventListener('click',function(){ t.classList.toggle('on'); });
+});
+
+function fmt2(v){return (Math.round(v*100)/100).toFixed(2);}
+function bind(id,key,formatter){
+  var s=document.getElementById(id), out=document.getElementById(id+'v');
+  function u(){var v=parseFloat(s.value);var o={};o[key]=v;LiquidGlass.set(o);
+    if(out) out.textContent = formatter?formatter(v):v;}
+  s.addEventListener('input',u); u();
+}
+bind('refraction','refraction');
+bind('bezel','bezel');
+bind('blur','blur',fmt2);
+bind('saturation','saturation',fmt2);
+bind('specular','specular',fmt2);
+bind('tintHue','tintHue',function(v){return v+'\u00B0';});
+bind('tintOpacity','tintOpacity',fmt2);
+
+document.getElementById('env').addEventListener('click',function(){
+  var dark = document.body.getAttribute('data-lg-env')==='dark';
+  document.body.setAttribute('data-lg-env', dark?'light':'dark');
+  this.textContent = dark?'Light':'Dark';
+  LiquidGlass.applyAll();
+});
+
+</script>
+</body>
+</html>

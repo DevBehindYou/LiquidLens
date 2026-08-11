@@ -1,0 +1,22 @@
+{
+  "name": "liquidlens-monorepo",
+  "version": "1.0.1",
+  "private": true,
+  "description": "Apple Liquid Glass with real edge refraction — for Web, React, React Native, Flutter, and SwiftUI. Monorepo root; the publishable web engine lives in packages/core (@liquidlens/core).",
+  "keywords": [
+    "liquid-glass", "glassmorphism", "apple", "ios26", "refraction",
+    "backdrop-filter", "glass", "ui", "design-system", "svg-filter",
+    "react", "react-native", "flutter", "swiftui", "skia"
+  ],
+  "license": "MIT",
+  "author": "Akash Sharma",
+  "homepage": "https://github.com/your-org/liquidlens",
+  "repository": { "type": "git", "url": "https://github.com/your-org/liquidlens.git" },
+  "workspaces": ["packages/*"],
+  "scripts": {
+    "start": "npx serve .",
+    "examples": "npx serve examples",
+    "note": "No build step, no runtime dependencies. Open examples/*.html or artifacts/*.html directly in a Chromium browser."
+  },
+  "engines": { "node": ">=16" }
+}

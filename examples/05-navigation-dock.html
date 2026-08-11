@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LiquidLens — 05 Navigation Dock</title>
+<link rel="stylesheet" href="../packages/core/tokens.css" />
+<link rel="stylesheet" href="../packages/core/liquid-glass.css" />
+<link rel="stylesheet" href="../assets/demo.css" />
+<style>
+  .dock {
+    position: fixed; left: 50%; bottom: 26px; transform: translateX(-50%);
+    display: flex; align-items: flex-end; gap: 12px; padding: 12px 16px; --lg-radius: 28px; z-index: 20;
+  }
+  .app {
+    width: 56px; height: 56px; border-radius: 15px; display: grid; place-items: center; font-size: 30px;
+    cursor: pointer; position: relative;
+    background: linear-gradient(160deg, rgba(255,255,255,.22), rgba(255,255,255,.05));
+    box-shadow: 0 4px 14px rgba(0,0,0,.28), 0 0 0 1px rgba(255,255,255,.12) inset;
+    transition: transform .22s var(--lg-ease);
+    transform-origin: bottom center;
+  }
+  .app:hover { transform: scale(1.32) translateY(-6px); }
+  .app:active { transform: scale(1.12) translateY(-2px); }
+  .app.run::after { content: ""; position: absolute; bottom: -7px; left: 50%; transform: translateX(-50%); width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,.85); }
+  .dock-sep { width: 1px; align-self: stretch; margin: 6px 4px; background: rgba(255,255,255,.22); }
+  .hint { position: fixed; left: 50%; bottom: 100px; transform: translateX(-50%); font-size: 13px; opacity: .55; }
+</style>
+</head>
+<body>
+  <div class="wallpaper wp-aurora"><div class="bg-text"><span>Dock</span><span>Magnify</span></div></div>
+  <div class="demo-label">05 · Navigation Dock</div>
+
+  <div class="hint">Hover an icon — it magnifies, macOS-style</div>
+
+  <div class="lg-glass dock" data-glass data-lg-refraction="22" data-lg-bezel="26">
+    <div class="app run" aria-label="Finder">🗂️</div>
+    <div class="app run" aria-label="Safari">🧭</div>
+    <div class="app" aria-label="Mail">✉️</div>
+    <div class="app run" aria-label="Messages">💬</div>
+    <div class="app" aria-label="Photos">🌇</div>
+    <div class="app" aria-label="Maps">🗺️</div>
+    <div class="app" aria-label="Music">🎵</div>
+    <div class="dock-sep"></div>
+    <div class="app" aria-label="Settings">⚙️</div>
+    <div class="app run" aria-label="Trash">🗑️</div>
+  </div>
+
+  <script src="../packages/core/liquid-glass.js"></script>
+  <script>
+    LiquidGlass.init({ refraction:18, bezel:22, blur:3 });
+    document.querySelectorAll('.app').forEach(function(a){
+      a.addEventListener('click', function(){ a.classList.toggle('run'); });
+    });
+  </script>
+</body>
+</html>

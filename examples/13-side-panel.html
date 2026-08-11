@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LiquidLens — 13 Side Panel</title>
+<link rel="stylesheet" href="../packages/core/tokens.css" />
+<link rel="stylesheet" href="../packages/core/liquid-glass.css" />
+<link rel="stylesheet" href="../assets/demo.css" />
+<style>
+  .panel {
+    position: fixed; left: 22px; top: 50%; transform: translateY(-50%);
+    width: 272px; padding: 18px; --lg-radius: 30px; z-index: 20;
+    transition: transform .4s var(--lg-ease), opacity .3s ease;
+  }
+  .panel.hidden { transform: translateY(-50%) translateX(-120%); opacity: 0; }
+  .brand { display: flex; align-items: center; gap: 11px; padding: 6px 8px 16px; }
+  .brand .logo { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; font-size: 18px; background: linear-gradient(150deg,#7a5cff,#2bd6ff); }
+  .brand b { font-size: 16px; } .brand span { font-size: 11.5px; opacity: .6; display: block; }
+
+  .nav { display: flex; flex-direction: column; gap: 4px; }
+  .item { display: flex; align-items: center; gap: 12px; padding: 11px 13px; border-radius: 14px; cursor: pointer; color: var(--lg-fg); transition: background .18s; position: relative; }
+  .item:hover { background: rgba(255,255,255,.09); }
+  .item.active { background: rgba(255,255,255,.20); box-shadow: 0 0 0 1px rgba(255,255,255,.22) inset; }
+  .item svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; flex: 0 0 auto; }
+  .item span { flex: 1; font-size: 14.5px; font-weight: 550; }
+  .item .count { font-size: 12px; opacity: .6; background: rgba(255,255,255,.14); padding: 2px 8px; border-radius: 999px; }
+  .sep { height: 1px; background: rgba(255,255,255,.14); margin: 12px 6px; }
+  .user { display: flex; align-items: center; gap: 11px; padding: 8px; margin-top: 6px; }
+  .user .av { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(150deg,#ff5ea8,#ffd36e); }
+  .user b { font-size: 14px; } .user span { font-size: 11.5px; opacity: .6; display:block; }
+
+  .toggle { position: fixed; left: 22px; top: 22px; z-index: 30; }
+  .stage-hint { position: fixed; right: 4vw; top: 50%; transform: translateY(-50%); max-width: 320px; opacity: .5; font-size: 15px; line-height: 1.6; }
+</style>
+</head>
+<body>
+  <div class="wallpaper wp-sunset"><div class="bg-text"><span>Side</span><span>Panel</span></div></div>
+  <div class="demo-label">13 · Side Panel</div>
+
+  <button class="lg-glass lg-btn lg-circle lg-press toggle" data-glass data-toggle aria-label="menu" style="width:46px;height:46px;padding:0;justify-content:center">
+    <svg viewBox="0 0 24 24" style="width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
+
+  <p class="stage-hint">A translucent navigation sidebar, docked left. Tap items to switch the active row; use the menu button to slide it away.</p>
+
+  <div class="lg-glass panel" data-glass data-panel data-lg-refraction="20" data-lg-bezel="26">
+    <div class="brand">
+      <div class="logo">◆</div>
+      <div><b>Aperture</b><span>Workspace</span></div>
+    </div>
+
+    <div class="nav">
+      <div class="item active" data-item>
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></svg>
+        <span>Dashboard</span>
+      </div>
+      <div class="item" data-item>
+        <svg viewBox="0 0 24 24"><path d="M4 19V5l8 5 8-5v14"/></svg>
+        <span>Inbox</span><div class="count">8</div>
+      </div>
+      <div class="item" data-item>
+        <svg viewBox="0 0 24 24"><path d="M3 7h18M3 12h18M3 17h12"/></svg>
+        <span>Projects</span>
+      </div>
+      <div class="item" data-item>
+        <svg viewBox="0 0 24 24"><path d="M12 3l7 4v5c0 4-3 7-7 9-4-2-7-5-7-9V7z"/></svg>
+        <span>Insights</span>
+      </div>
+      <div class="item" data-item>
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+        <span>Team</span><div class="count">5</div>
+      </div>
+
+      <div class="sep"></div>
+
+      <div class="item" data-item>
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.6-2-3.4-2.4 1a7 7 0 0 0-1.7-1L16.5 3h-4L12 5.4a7 7 0 0 0-1.7 1l-2.4-1-2 3.4 2 1.6a7 7 0 0 0 0 2l-2 1.6 2 3.4 2.4-1a7 7 0 0 0 1.7 1L12.5 21h4l-.4-2.4a7 7 0 0 0 1.7-1l2.4 1 2-3.4-2-1.6a7 7 0 0 0 .1-1z"/></svg>
+        <span>Settings</span>
+      </div>
+    </div>
+
+    <div class="sep"></div>
+    <div class="user">
+      <div class="av"></div>
+      <div><b>Akash R.</b><span>akash@studio</span></div>
+    </div>
+  </div>
+
+  <script src="../packages/core/liquid-glass.js"></script>
+  <script>
+    LiquidGlass.init({ refraction:18, bezel:22, blur:3 });
+    var items = document.querySelectorAll('[data-item]');
+    items.forEach(function(it){ it.addEventListener('click', function(){ items.forEach(function(x){ x.classList.remove('active'); }); it.classList.add('active'); }); });
+    var panel = document.querySelector('[data-panel]');
+    document.querySelector('[data-toggle]').addEventListener('click', function(){ panel.classList.toggle('hidden'); });
+  </script>
+</body>
+</html>

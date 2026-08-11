@@ -1,0 +1,54 @@
+/*!
+ * LiquidLens — tokens.css
+ * Design tokens for the Liquid Glass system. Import BEFORE liquid-glass.css.
+ * Override any of these on :root (or a scope) to re-theme without touching the engine.
+ */
+:root {
+  /* ---- material parameters (mirror the JS defaults; JS updates the live ones) ---- */
+  --lg-blur: 3px;            /* backdrop blur */
+  --lg-sat: 1.8;             /* backdrop saturation */
+  --lg-spec: 0.9;            /* specular intensity 0..1.5 */
+  --lg-tint-h: 220;          /* tint hue */
+  --lg-tint-s: 40%;          /* tint saturation */
+  --lg-tint-l: 70%;          /* tint lightness */
+  --lg-tint-a: 0.10;         /* tint alpha */
+
+  /* ---- dynamic (written by the engine at runtime) ---- */
+  --lg-lx: 32%;              /* specular light x */
+  --lg-ly: 12%;              /* specular light y */
+  --lg-edge: 140deg;         /* rim sweep angle */
+
+  /* ---- shape ---- */
+  --lg-radius: 28px;         /* default corner radius */
+  --lg-radius-sm: 16px;
+  --lg-radius-lg: 40px;
+  --lg-radius-pill: 999px;
+
+  /* ---- depth (adaptive shadow + inner light) ---- */
+  --lg-shadow-drop: 0 12px 34px rgba(0,0,0,.28), 0 2px 8px rgba(0,0,0,.20);
+  --lg-shadow-inner: 0 1px 1px rgba(255,255,255,.35) inset, 0 -1px 1px rgba(255,255,255,.10) inset;
+
+  /* ---- chromatic edge (fake dispersion) ---- */
+  --lg-chroma-cool: rgba(120,180,255,.20);
+  --lg-chroma-warm: rgba(255,120,200,.18);
+
+  /* ---- spacing scale (for building demos consistently) ---- */
+  --lg-space-1: 6px;  --lg-space-2: 10px; --lg-space-3: 14px;
+  --lg-space-4: 18px; --lg-space-5: 24px; --lg-space-6: 34px;
+
+  /* ---- type ---- */
+  --lg-font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --lg-fg: #fff;             /* foreground on glass (keep high-contrast) */
+  --lg-fg-dim: rgba(255,255,255,.7);
+
+  /* ---- motion ---- */
+  --lg-ease: cubic-bezier(.2, 1, .3, 1);   /* springy Apple-ish easing */
+  --lg-dur: .35s;
+}
+
+/* A conventional "dark environment" scope (optional). */
+[data-lg-env="dark"] {
+  --lg-tint-l: 55%;
+  --lg-tint-a: 0.12;
+  --lg-shadow-drop: 0 14px 40px rgba(0,0,0,.5), 0 2px 8px rgba(0,0,0,.35);
+}

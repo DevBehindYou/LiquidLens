@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LiquidLens — 02 Buttons</title>
+<link rel="stylesheet" href="../packages/core/tokens.css" />
+<link rel="stylesheet" href="../packages/core/liquid-glass.css" />
+<link rel="stylesheet" href="../assets/demo.css" />
+<style>
+  .btns { width: min(760px, 90vw); }
+  .cap { font-size: 12px; letter-spacing: .06em; text-transform: uppercase; opacity: .55; margin: 0 0 14px; }
+  .lg-btn svg { width: 19px; height: 19px; stroke: currentColor; fill: none; stroke-width: 1.9; }
+  .lg-btn.lg-circle { padding: 0; width: 54px; height: 54px; justify-content: center; }
+  .lg-btn.lg-sm { padding: 9px 16px; font-size: 14px; }
+  .lg-btn.on { --lg-tint-a: .30; box-shadow: var(--lg-shadow-inner), var(--lg-shadow-drop), 0 0 0 1px rgba(255,255,255,.28) inset; }
+  .grp { margin-bottom: 30px; }
+</style>
+</head>
+<body>
+  <div class="wallpaper wp-aurora"><div class="bg-text"><span>Tap</span><span>Glass</span></div></div>
+  <div class="demo-label">02 · Buttons</div>
+
+  <div class="center">
+    <div class="btns stack" style="align-items:stretch;gap:0">
+      <div class="grp">
+        <p class="cap">Primary · tinted</p>
+        <div class="row" style="justify-content:flex-start">
+          <button class="lg-glass lg-btn lg-press lg-interactive" data-glass>
+            <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg> Continue
+          </button>
+          <button class="lg-glass lg-btn lg-press lg-interactive lg-tint-blue" data-glass>Get Started</button>
+          <button class="lg-glass lg-btn lg-press lg-interactive lg-tint-green" data-glass>
+            <svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> Confirm
+          </button>
+          <button class="lg-glass lg-btn lg-press lg-interactive lg-tint-red" data-glass>Delete</button>
+        </div>
+      </div>
+
+      <div class="grp">
+        <p class="cap">Pills · small</p>
+        <div class="row" style="justify-content:flex-start">
+          <button class="lg-glass lg-btn lg-pill lg-press lg-interactive lg-tint-purple" data-glass>Follow</button>
+          <button class="lg-glass lg-btn lg-pill lg-press lg-interactive lg-tint-amber" data-glass>★ Favorite</button>
+          <button class="lg-glass lg-btn lg-pill lg-sm lg-press lg-interactive" data-glass>Share</button>
+          <button class="lg-glass lg-btn lg-pill lg-sm lg-press lg-interactive" data-glass>Copy Link</button>
+        </div>
+      </div>
+
+      <div class="grp" style="margin-bottom:0">
+        <p class="cap">Icon · toggle</p>
+        <div class="row" style="justify-content:flex-start">
+          <button class="lg-glass lg-btn lg-circle lg-press lg-interactive" data-glass aria-label="like">
+            <svg viewBox="0 0 24 24"><path d="M12 21s-7-4.5-9.5-9C.7 8.5 2.5 5 6 5c2 0 3.2 1.2 4 2.3C10.8 6.2 12 5 14 5c3.5 0 5.3 3.5 3.5 7-2.5 4.5-9.5 9-9.5 9z"/></svg>
+          </button>
+          <button class="lg-glass lg-btn lg-circle lg-press lg-interactive" data-glass aria-label="star">
+            <svg viewBox="0 0 24 24"><path d="M12 3l2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 16.9 6.8 19.2l1-5.9L3.5 9.2l5.9-.8z"/></svg>
+          </button>
+          <button class="lg-glass lg-btn lg-circle lg-press lg-interactive" data-glass aria-label="bookmark">
+            <svg viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"/></svg>
+          </button>
+          <button class="lg-glass lg-btn lg-circle lg-press lg-interactive" data-glass aria-label="add">
+            <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../packages/core/liquid-glass.js"></script>
+  <script>
+    LiquidGlass.init({ refraction:18, bezel:22, blur:3 });
+    document.querySelectorAll('.lg-circle').forEach(function(b){
+      b.addEventListener('click', function(){ b.classList.toggle('on'); });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="440" viewBox="0 0 1000 440" fill="none" font-family="-apple-system, SF Pro Text, Segoe UI, Arial">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1000" y2="440"><stop offset="0" stop-color="#0e1330"/><stop offset="1" stop-color="#0a1a33"/></linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfe3ff" stop-opacity=".55"/><stop offset="1" stop-color="#8fbaff" stop-opacity=".25"/></linearGradient>
+  </defs>
+  <rect width="1000" height="440" rx="18" fill="url(#bg)"/>
+  <text x="40" y="52" fill="#fff" font-size="26" font-weight="800">How the edge bends light (refraction)</text>
+  <text x="40" y="80" fill="#9fb4d8" font-size="15">A convex squircle edge + Snell's law. The center stays flat; only the bezel band refracts.</text>
+
+  <!-- cross-section -->
+  <g transform="translate(60,120)">
+    <text x="0" y="-8" fill="#7f95bd" font-size="13" font-weight="600">CROSS-SECTION</text>
+    <!-- glass slab with curved edges -->
+    <path d="M20 120 Q20 40 80 40 L360 40 Q420 40 420 120 Z" fill="url(#glass)" stroke="#cfe6ff" stroke-opacity=".7"/>
+    <!-- incoming rays -->
+    <g stroke="#ffd36e" stroke-width="2.5">
+      <line x1="60" y1="-6" x2="60" y2="40"/>
+      <line x1="120" y1="-6" x2="120" y2="40"/>
+      <line x1="220" y1="-6" x2="220" y2="40"/>
+      <line x1="320" y1="-6" x2="320" y2="40"/>
+      <line x1="380" y1="-6" x2="380" y2="40"/>
+    </g>
+    <!-- refracted rays: center straight, edges bent inward -->
+    <g stroke="#ff8fce" stroke-width="2.5">
+      <line x1="60" y1="40" x2="92" y2="120"/>   <!-- edge: bent -->
+      <line x1="120" y1="40" x2="132" y2="120"/> <!-- near edge: slight -->
+      <line x1="220" y1="40" x2="220" y2="120"/> <!-- center: straight -->
+      <line x1="320" y1="40" x2="308" y2="120"/>
+      <line x1="380" y1="40" x2="348" y2="120"/>
+    </g>
+    <text x="30" y="150" fill="#ffd36e" font-size="12">incoming light ↓</text>
+    <text x="185" y="150" fill="#9fe6a8" font-size="12">no bend</text>
+    <text x="330" y="150" fill="#ff8fce" font-size="12">bent at edge</text>
+  </g>
+
+  <!-- top-down bezel band -->
+  <g transform="translate(560,120)">
+    <text x="0" y="-8" fill="#7f95bd" font-size="13" font-weight="600">TOP-DOWN (the "bezel")</text>
+    <rect x="0" y="0" width="360" height="200" rx="40" fill="url(#glass)" stroke="#cfe6ff" stroke-opacity=".6"/>
+    <rect x="22" y="22" width="316" height="156" rx="22" fill="none" stroke="#fff" stroke-opacity=".35" stroke-dasharray="5 6"/>
+    <text x="180" y="106" fill="#fff" fill-opacity=".85" font-size="14" text-anchor="middle">flat center</text>
+    <text x="180" y="128" fill="#9fb4d8" font-size="12" text-anchor="middle">(no displacement)</text>
+    <text x="180" y="16" fill="#ffd36e" font-size="11" text-anchor="middle">refracting edge band</text>
+    <!-- outward arrows in the band -->
+    <g stroke="#ff8fce" stroke-width="2" marker-end="url(#a)">
+      <line x1="60" y1="100" x2="30" y2="100"/>
+      <line x1="300" y1="100" x2="330" y2="100"/>
+      <line x1="180" y1="50" x2="180" y2="24"/>
+      <line x1="180" y1="150" x2="180" y2="176"/>
+    </g>
+  </g>
+
+  <!-- encoding note -->
+  <g transform="translate(60,340)">
+    <rect x="0" y="0" width="880" height="66" rx="14" fill="#ffffff" fill-opacity=".06" stroke="#ffffff" stroke-opacity=".12"/>
+    <text x="20" y="28" fill="#fff" font-size="14" font-weight="700">Encoded as a displacement map →</text>
+    <text x="20" y="50" fill="#9fb4d8" font-size="13">Red channel = X shift, Green = Y shift, 128 = no shift. `feDisplacementMap` moves each backdrop pixel by ((R−128)/127, (G−128)/127) × scale.</text>
+  </g>
+  <defs><marker id="a" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#ff8fce"/></marker></defs>
+</svg>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LiquidLens — 04 Control Center</title>
+<link rel="stylesheet" href="../packages/core/tokens.css" />
+<link rel="stylesheet" href="../packages/core/liquid-glass.css" />
+<link rel="stylesheet" href="../assets/demo.css" />
+<style>
+  .cc { display: grid; grid-template-columns: repeat(4, 74px); grid-auto-rows: 74px; gap: 14px; width: min(360px, 92vw); }
+  .tile { display: inline-flex; align-items: center; justify-content: center; cursor: pointer; --lg-radius: 22px; }
+  .tile svg { width: 26px; height: 26px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .tile.on { --lg-tint-a: .34; }
+  .tile.on.b { --lg-tint-h: 212; }
+  .tile.on.g { --lg-tint-h: 145; }
+  .tile.wide { grid-column: span 2; }
+  .conn { grid-column: span 2; grid-row: span 2; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 12px; padding: 12px; --lg-radius: 26px; }
+  .conn .mini { display: flex; align-items: center; justify-content: center; border-radius: 16px; background: rgba(255,255,255,.10); cursor: pointer; transition: background .2s; }
+  .conn .mini.on { background: rgba(60,140,255,.55); }
+  .conn .mini svg { width: 22px; height: 22px; stroke: #fff; fill: none; stroke-width: 1.8; }
+  .slider { grid-row: span 2; grid-column: span 1; position: relative; overflow: hidden; --lg-radius: 26px; cursor: pointer; }
+  .slider .fill { position: absolute; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,.5); z-index: 1; }
+  .slider .ic { position: absolute; bottom: 12px; left: 0; right: 0; text-align: center; z-index: 3; font-size: 20px; }
+  .music { grid-column: span 4; padding: 14px 16px; display: flex; align-items: center; gap: 14px; --lg-radius: 26px; }
+  .music .art { width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg,#ff5ea8,#ffd36e); flex: 0 0 auto; display: grid; place-items: center; font-size: 22px; }
+  .music .meta { flex: 1; min-width: 0; }
+  .music .meta b { display: block; font-size: 14px; }
+  .music .meta span { font-size: 12px; opacity: .7; }
+  .music .pp { font-size: 20px; cursor: pointer; }
+</style>
+</head>
+<body>
+  <div class="wallpaper wp-sunset"><div class="bg-text"><span>Control</span><span>Center</span></div></div>
+  <div class="demo-label">04 · Control Center</div>
+
+  <div class="center">
+    <div class="cc">
+      <!-- Connectivity cluster -->
+      <div class="lg-glass conn" data-glass>
+        <div class="mini on" data-conn aria-label="airplane"><svg viewBox="0 0 24 24"><path d="M21 15v-2l-8-5V4a2 2 0 0 0-4 0v4l-8 5v2l8-2v3l-2 2v1l4-1 4 1v-1l-2-2v-3z"/></svg></div>
+        <div class="mini on" data-conn aria-label="cellular"><svg viewBox="0 0 24 24"><path d="M5 20v-3M10 20v-7M15 20v-11M20 20V4"/></svg></div>
+        <div class="mini on" data-conn aria-label="wifi"><svg viewBox="0 0 24 24"><path d="M2 8a16 16 0 0 1 20 0M5 12a11 11 0 0 1 14 0M8.5 15.5a6 6 0 0 1 7 0"/><circle cx="12" cy="19" r="1"/></svg></div>
+        <div class="mini on" data-conn aria-label="bluetooth"><svg viewBox="0 0 24 24"><path d="m7 8 10 8-5 4V4l5 4L7 16"/></svg></div>
+      </div>
+
+      <!-- Brightness slider -->
+      <div class="lg-glass slider" data-glass data-slider="70">
+        <div class="fill" style="height:70%"></div>
+        <div class="ic">☀︎</div>
+      </div>
+      <!-- Volume slider -->
+      <div class="lg-glass slider" data-glass data-slider="45">
+        <div class="fill" style="height:45%"></div>
+        <div class="ic">🔊</div>
+      </div>
+
+      <!-- Toggle tiles -->
+      <div class="lg-glass tile on b" data-glass data-tile aria-label="flashlight"><svg viewBox="0 0 24 24"><path d="M7 2h10l-1 5H8zM8 7h8v3l-2 12h-4l-2-12z"/></svg></div>
+      <div class="lg-glass tile" data-glass data-tile aria-label="timer"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 13V9M9 2h6"/></svg></div>
+      <div class="lg-glass tile on g" data-glass data-tile aria-label="do-not-disturb"><svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></div>
+      <div class="lg-glass tile" data-glass data-tile aria-label="rotate-lock"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 14-5M20 12a8 8 0 0 1-14 5M18 3v4h-4M6 21v-4h4"/></svg></div>
+
+      <!-- Now playing -->
+      <div class="lg-glass music" data-glass>
+        <div class="art">🎧</div>
+        <div class="meta"><b>Weightless</b><span>Marconi Union</span></div>
+        <div class="pp" data-pp>❚❚</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../packages/core/liquid-glass.js"></script>
+  <script>
+    LiquidGlass.init({ refraction:18, bezel:22, blur:3 });
+    document.querySelectorAll('[data-tile]').forEach(function(t){
+      t.addEventListener('click', function(){ t.classList.toggle('on'); });
+    });
+    document.querySelectorAll('[data-conn]').forEach(function(c){
+      c.addEventListener('click', function(){ c.classList.toggle('on'); });
+    });
+    var pp = document.querySelector('[data-pp]');
+    pp.addEventListener('click', function(){ pp.textContent = pp.textContent === '❚❚' ? '►' : '❚❚'; });
+
+    document.querySelectorAll('[data-slider]').forEach(function(s){
+      var fill = s.querySelector('.fill');
+      function setFromEvent(e){
+        var r = s.getBoundingClientRect();
+        var y = (e.touches ? e.touches[0].clientY : e.clientY) - r.top;
+        var pct = Math.max(0, Math.min(100, (1 - y / r.height) * 100));
+        fill.style.height = pct + '%';
+      }
+      var dragging = false;
+      s.addEventListener('pointerdown', function(e){ dragging = true; s.setPointerCapture(e.pointerId); setFromEvent(e); });
+      s.addEventListener('pointermove', function(e){ if (dragging) setFromEvent(e); });
+      s.addEventListener('pointerup', function(){ dragging = false; });
+    });
+  </script>
+</body>
+</html>

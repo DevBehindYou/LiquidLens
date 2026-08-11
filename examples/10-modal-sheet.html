@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LiquidLens — 10 Modal Sheet</title>
+<link rel="stylesheet" href="../packages/core/tokens.css" />
+<link rel="stylesheet" href="../packages/core/liquid-glass.css" />
+<link rel="stylesheet" href="../assets/demo.css" />
+<style>
+  .opener { width: min(420px, 88vw); padding: 30px 32px; --lg-radius: 30px; text-align: center; }
+  .opener h2 { margin: 0 0 8px; font-size: 22px; }
+  .opener p { margin: 0 0 22px; opacity: .72; font-size: 14px; line-height: 1.5; }
+
+  .scrim-bg {
+    position: fixed; inset: 0; z-index: 40; display: grid; place-items: end center;
+    background: rgba(0,0,0,.32); backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px);
+    transition: opacity .35s ease; padding-bottom: 4vh;
+  }
+  .scrim-bg.closed { opacity: 0; pointer-events: none; }
+
+  .sheet { width: min(460px, 92vw); padding: 26px 28px 24px; --lg-radius: 34px;
+           transition: transform .4s var(--lg-ease); }
+  .scrim-bg.closed .sheet { transform: translateY(120%); }
+  .grabber { width: 40px; height: 5px; border-radius: 3px; background: rgba(255,255,255,.4); margin: 0 auto 18px; }
+  .sheet h3 { margin: 0 0 6px; font-size: 21px; }
+  .sheet .sub { margin: 0 0 20px; opacity: .72; font-size: 14px; line-height: 1.5; }
+  .opt { display: flex; align-items: center; gap: 12px; padding: 13px 14px; border-radius: 16px; background: rgba(255,255,255,.08); margin-bottom: 10px; cursor: pointer; }
+  .opt .em { font-size: 20px; } .opt b { font-size: 15px; } .opt span { font-size: 12.5px; opacity: .65; display:block; }
+  .opt .txt { flex: 1; }
+  .opt .chk { width: 20px; height: 20px; border-radius: 50%; border: 2px solid rgba(255,255,255,.5); }
+  .opt.on .chk { background: #39d98a; border-color: #39d98a; }
+  .actions { display: flex; gap: 12px; margin-top: 18px; }
+  .actions .lg-btn { flex: 1; justify-content: center; }
+</style>
+</head>
+<body>
+  <div class="wallpaper wp-sunset"><div class="bg-text"><span>Sheet</span><span>Present</span></div></div>
+  <div class="demo-label">10 · Modal Sheet</div>
+
+  <div class="center">
+    <div class="lg-glass opener" data-glass>
+      <h2>Modal &amp; Sheets</h2>
+      <p>A bottom sheet rises over a dimmed, blurred backdrop. The sheet itself is Liquid Glass.</p>
+      <button class="lg-glass lg-btn lg-pill lg-press lg-interactive lg-tint-blue" data-open style="margin:0 auto">Present Sheet</button>
+    </div>
+  </div>
+
+  <!-- starts OPEN so the glass gets measured; user can close/reopen -->
+  <div class="scrim-bg" data-scrim>
+    <div class="lg-glass sheet" data-glass data-lg-refraction="20" data-lg-bezel="26">
+      <div class="grabber"></div>
+      <h3>Choose a plan</h3>
+      <p class="sub">Pick the option that fits. You can change this anytime in Settings.</p>
+
+      <div class="opt on" data-opt>
+        <div class="em">⚡</div>
+        <div class="txt"><b>Pro</b><span>Everything, unlimited · $9/mo</span></div>
+        <div class="chk"></div>
+      </div>
+      <div class="opt" data-opt>
+        <div class="em">✦</div>
+        <div class="txt"><b>Plus</b><span>Most features · $4/mo</span></div>
+        <div class="chk"></div>
+      </div>
+      <div class="opt" data-opt>
+        <div class="em">○</div>
+        <div class="txt"><b>Free</b><span>The basics · $0</span></div>
+        <div class="chk"></div>
+      </div>
+
+      <div class="actions">
+        <button class="lg-glass lg-btn lg-pill lg-press" data-close>Cancel</button>
+        <button class="lg-glass lg-btn lg-pill lg-press lg-tint-green" data-close>Continue</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../packages/core/liquid-glass.js"></script>
+  <script>
+    LiquidGlass.init({ refraction:18, bezel:22, blur:3 });
+    var scrim = document.querySelector('[data-scrim]');
+    document.querySelector('[data-open]').addEventListener('click', function(){ scrim.classList.remove('closed'); });
+    document.querySelectorAll('[data-close]').forEach(function(b){ b.addEventListener('click', function(){ scrim.classList.add('closed'); }); });
+    scrim.addEventListener('click', function(e){ if (e.target === scrim) scrim.classList.add('closed'); });
+    var opts = document.querySelectorAll('[data-opt]');
+    opts.forEach(function(o){ o.addEventListener('click', function(){ opts.forEach(function(x){ x.classList.remove('on'); }); o.classList.add('on'); }); });
+    // auto-tuck shortly after load so the demo opens on the opener card
+    window.addEventListener('load', function(){ setTimeout(function(){ scrim.classList.add('closed'); }, 1400); });
+  </script>
+</body>
+</html>

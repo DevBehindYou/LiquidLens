@@ -1,0 +1,18 @@
+{
+  "name": "@liquidlens/core",
+  "version": "1.0.1",
+  "description": "Apple Liquid Glass for the web with real edge refraction (SVG feDisplacementMap backdrop-filter). Zero dependencies. UMD: works as a <script> global, CommonJS require, or ESM import.",
+  "license": "MIT",
+  "author": "Akash Sharma",
+  "main": "liquid-glass.js",
+  "exports": {
+    ".": "./liquid-glass.js",
+    "./liquid-glass.js": "./liquid-glass.js",
+    "./liquid-glass.css": "./liquid-glass.css",
+    "./tokens.css": "./tokens.css"
+  },
+  "sideEffects": ["*.css", "liquid-glass.js"],
+  "files": ["liquid-glass.js", "liquid-glass.css", "tokens.css", "README.md"],
+  "keywords": ["liquid-glass", "apple", "ios26", "refraction", "backdrop-filter", "glassmorphism"],
+  "repository": { "type": "git", "url": "https://github.com/your-org/liquidlens.git", "directory": "packages/core" }
+}

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LiquidLens — 11 Media Controls</title>
+<link rel="stylesheet" href="../packages/core/tokens.css" />
+<link rel="stylesheet" href="../packages/core/liquid-glass.css" />
+<link rel="stylesheet" href="../assets/demo.css" />
+<style>
+  .player { width: min(400px, 92vw); padding: 24px; --lg-radius: 34px; }
+  .art { width: 100%; aspect-ratio: 1; border-radius: 22px; margin-bottom: 20px; display: grid; place-items: center; font-size: 84px;
+         background: linear-gradient(150deg,#ff5ea8,#7a5cff 55%,#2bd6ff); box-shadow: 0 12px 30px rgba(0,0,0,.35) inset, 0 8px 24px rgba(0,0,0,.3); }
+  .meta { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+  .meta h3 { margin: 0 0 3px; font-size: 20px; letter-spacing: -.01em; }
+  .meta span { font-size: 14px; opacity: .7; }
+  .meta .fav { font-size: 20px; cursor: pointer; opacity: .8; }
+
+  .scrub { position: relative; height: 8px; border-radius: 999px; background: rgba(255,255,255,.18); cursor: pointer; touch-action: none; margin-bottom: 6px; }
+  .scrub .played { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px; background: #fff; }
+  .scrub .knob { position: absolute; top: 50%; width: 14px; height: 14px; border-radius: 50%; background: #fff; transform: translate(-50%,-50%); box-shadow: 0 2px 6px rgba(0,0,0,.4); }
+  .time { display: flex; justify-content: space-between; font-size: 11.5px; opacity: .6; font-variant-numeric: tabular-nums; margin-bottom: 18px; }
+
+  .transport { display: flex; align-items: center; justify-content: center; gap: 22px; margin-bottom: 20px; }
+  .tbtn { display: grid; place-items: center; cursor: pointer; color: #fff; }
+  .tbtn svg { width: 30px; height: 30px; fill: currentColor; }
+  .play { width: 66px; height: 66px; border-radius: 50%; background: rgba(255,255,255,.2); box-shadow: 0 0 0 1px rgba(255,255,255,.25) inset; transition: transform .15s; }
+  .play:active { transform: scale(.92); }
+  .play svg { width: 30px; height: 30px; }
+
+  .vol { display: flex; align-items: center; gap: 12px; }
+  .vol .ic { font-size: 15px; opacity: .75; }
+  .vol .track { position: relative; flex: 1; height: 6px; border-radius: 999px; background: rgba(255,255,255,.18); cursor: pointer; touch-action: none; }
+  .vol .track .fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px; background: rgba(255,255,255,.85); }
+</style>
+</head>
+<body>
+  <div class="wallpaper wp-aurora"><div class="bg-text"><span>Now</span><span>Playing</span></div></div>
+  <div class="demo-label">11 · Media Controls</div>
+
+  <div class="center">
+    <div class="lg-glass player" data-glass data-lg-refraction="20" data-lg-bezel="26">
+      <div class="art">🌊</div>
+      <div class="meta">
+        <div><h3>Weightless</h3><span>Marconi Union · Ambient</span></div>
+        <div class="fav" data-fav>♡</div>
+      </div>
+
+      <div class="scrub" data-scrub>
+        <div class="played" style="width:32%"></div>
+        <div class="knob" style="left:32%"></div>
+      </div>
+      <div class="time"><span data-cur>2:37</span><span data-rem>-5:31</span></div>
+
+      <div class="transport">
+        <div class="tbtn" data-back aria-label="previous"><svg viewBox="0 0 24 24"><path d="M6 5v14h2V5H6zm3 7 11 7V5z"/></svg></div>
+        <div class="tbtn play" data-play aria-label="play/pause"><svg viewBox="0 0 24 24" data-glyph><path d="M8 5v14M16 5v14" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"/></svg></div>
+        <div class="tbtn" data-fwd aria-label="next"><svg viewBox="0 0 24 24"><path d="M18 5v14h-2V5h2zM15 12 4 5v14z"/></svg></div>
+      </div>
+
+      <div class="vol">
+        <div class="ic">🔈</div>
+        <div class="track" data-vol><div class="fill" style="width:60%"></div></div>
+        <div class="ic">🔊</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../packages/core/liquid-glass.js"></script>
+  <script>
+    LiquidGlass.init({ refraction:18, bezel:22, blur:3 });
+    var TOTAL = 8 * 60 + 8; // 8:08
+    var scrub = document.querySelector('[data-scrub]');
+    var played = scrub.querySelector('.played'), knob = scrub.querySelector('.knob');
+    var cur = document.querySelector('[data-cur]'), rem = document.querySelector('[data-rem]');
+    var pos = 0.32, playing = true;
+    function fmt(s){ s = Math.max(0, Math.round(s)); return Math.floor(s/60) + ':' + String(s%60).padStart(2,'0'); }
+    function paint(){
+      played.style.width = (pos*100) + '%'; knob.style.left = (pos*100) + '%';
+      cur.textContent = fmt(pos*TOTAL); rem.textContent = '-' + fmt(TOTAL - pos*TOTAL);
+    }
+    paint();
+    function seek(e){
+      var r = scrub.getBoundingClientRect();
+      var x = (e.touches ? e.touches[0].clientX : e.clientX) - r.left;
+      pos = Math.max(0, Math.min(1, x / r.width)); paint();
+    }
+    var drag = false;
+    scrub.addEventListener('pointerdown', function(e){ drag = true; scrub.setPointerCapture(e.pointerId); seek(e); });
+    scrub.addEventListener('pointermove', function(e){ if (drag) seek(e); });
+    scrub.addEventListener('pointerup', function(){ drag = false; });
+
+    var glyph = document.querySelector('[data-glyph]');
+    var play = document.querySelector('[data-play]');
+    function setGlyph(){
+      glyph.innerHTML = playing
+        ? '<path d="M8 5v14M16 5v14" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"/>'
+        : '<path d="M8 5v14l11-7z" fill="currentColor"/>';
+    }
+    setGlyph();
+    play.addEventListener('click', function(){ playing = !playing; setGlyph(); });
+    setInterval(function(){ if (playing){ pos = Math.min(1, pos + 1/TOTAL); if (pos >= 1) pos = 0; paint(); } }, 1000);
+
+    document.querySelector('[data-back]').addEventListener('click', function(){ pos = 0; paint(); });
+    document.querySelector('[data-fwd]').addEventListener('click', function(){ pos = 0; paint(); });
+    var fav = document.querySelector('[data-fav]');
+    fav.addEventListener('click', function(){ fav.textContent = fav.textContent === '♡' ? '♥' : '♡'; });
+
+    var vol = document.querySelector('[data-vol]'), vfill = vol.querySelector('.fill');
+    function setVol(e){ var r = vol.getBoundingClientRect(); var x = (e.touches?e.touches[0].clientX:e.clientX) - r.left; vfill.style.width = Math.max(0,Math.min(100, x/r.width*100)) + '%'; }
+    var vdrag = false;
+    vol.addEventListener('pointerdown', function(e){ vdrag = true; vol.setPointerCapture(e.pointerId); setVol(e); });
+    vol.addEventListener('pointermove', function(e){ if (vdrag) setVol(e); });
+    vol.addEventListener('pointerup', function(){ vdrag = false; });
+  </script>
+</body>
+</html>

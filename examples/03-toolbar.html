@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LiquidLens — 03 Toolbar</title>
+<link rel="stylesheet" href="../packages/core/tokens.css" />
+<link rel="stylesheet" href="../packages/core/liquid-glass.css" />
+<link rel="stylesheet" href="../assets/demo.css" />
+<style>
+  .tb-btn {
+    width: 42px; height: 42px; display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 14px; cursor: pointer; color: var(--lg-fg);
+    transition: background .2s ease, transform .15s var(--lg-ease);
+  }
+  .tb-btn svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+  .tb-btn:hover { background: rgba(255,255,255,.12); }
+  .tb-btn:active { transform: scale(.9); }
+  .tb-btn.on { background: rgba(255,255,255,.22); box-shadow: 0 0 0 1px rgba(255,255,255,.25) inset; }
+  .tb-sep { width: 1px; height: 26px; background: rgba(255,255,255,.22); margin: 0 4px; }
+  .lg-toolbar { --lg-radius: 22px; }
+</style>
+</head>
+<body>
+  <div class="wallpaper wp-ocean"><div class="bg-text"><span>Edit</span><span>Format</span></div></div>
+  <div class="demo-label">03 · Toolbar</div>
+
+  <div class="center">
+    <div class="stack" style="gap:26px">
+      <!-- Formatting toolbar -->
+      <div class="lg-glass lg-toolbar" data-glass>
+        <div class="tb-btn on" data-toggle aria-label="bold"><svg viewBox="0 0 24 24"><path d="M7 5h6a3.5 3.5 0 0 1 0 7H7zM7 12h7a3.5 3.5 0 0 1 0 7H7z"/></svg></div>
+        <div class="tb-btn" data-toggle aria-label="italic"><svg viewBox="0 0 24 24"><path d="M19 5h-6M11 19H5M15 5 9 19"/></svg></div>
+        <div class="tb-btn" data-toggle aria-label="underline"><svg viewBox="0 0 24 24"><path d="M7 4v6a5 5 0 0 0 10 0V4M5 20h14"/></svg></div>
+        <div class="tb-sep"></div>
+        <div class="tb-btn on" data-radio aria-label="align-left"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h14"/></svg></div>
+        <div class="tb-btn" data-radio aria-label="align-center"><svg viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M6 18h12"/></svg></div>
+        <div class="tb-btn" data-radio aria-label="align-right"><svg viewBox="0 0 24 24"><path d="M4 6h16M10 12h10M6 18h14"/></svg></div>
+        <div class="tb-sep"></div>
+        <div class="tb-btn" data-toggle aria-label="link"><svg viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 6 .5l2-2a4 4 0 0 0-6-6l-1 1M14 10a4 4 0 0 0-6-.5l-2 2a4 4 0 0 0 6 6l1-1"/></svg></div>
+      </div>
+
+      <!-- Media / view toolbar (clear variant) -->
+      <div class="lg-glass lg-clear lg-toolbar" data-glass>
+        <span class="lg-scrim"></span>
+        <div class="tb-btn" data-toggle aria-label="image"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m5 19 5-5 4 4 3-3 2 2"/></svg></div>
+        <div class="tb-btn" data-toggle aria-label="crop"><svg viewBox="0 0 24 24"><path d="M6 2v14a2 2 0 0 0 2 2h14M18 22V8a2 2 0 0 0-2-2H2"/></svg></div>
+        <div class="tb-btn" data-toggle aria-label="magic"><svg viewBox="0 0 24 24"><path d="m5 19 9-9M14 5l1 3 3 1-3 1-1 3-1-3-3-1 3-1z"/></svg></div>
+        <div class="tb-sep"></div>
+        <div class="tb-btn" data-toggle aria-label="zoom-out"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M8 11h6M21 21l-4-4"/></svg></div>
+        <div class="tb-btn" data-toggle aria-label="zoom-in"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M11 8v6M8 11h6M21 21l-4-4"/></svg></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../packages/core/liquid-glass.js"></script>
+  <script>
+    LiquidGlass.init({ refraction:18, bezel:22, blur:3 });
+    document.querySelectorAll('[data-toggle]').forEach(function(b){
+      b.addEventListener('click', function(){ b.classList.toggle('on'); });
+    });
+    var radios = document.querySelectorAll('[data-radio]');
+    radios.forEach(function(b){
+      b.addEventListener('click', function(){ radios.forEach(function(r){ r.classList.remove('on'); }); b.classList.add('on'); });
+    });
+  </script>
+</body>
+</html>

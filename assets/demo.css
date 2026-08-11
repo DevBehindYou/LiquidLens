@@ -1,0 +1,50 @@
+/* demo.css — shared backdrops + layout for the example pages (NOT part of the library). */
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; margin: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: #fff; overflow: hidden; background: #0b0d17; -webkit-font-smoothing: antialiased;
+}
+/* Wallpapers — glass needs a rich backdrop to show refraction. Pick one via class on .wallpaper */
+.wallpaper { position: fixed; inset: -8%; z-index: -1; background-size: cover; }
+.wp-aurora {
+  background:
+    radial-gradient(40% 55% at 18% 22%, #ff5ea8 0%, rgba(255,94,168,0) 60%),
+    radial-gradient(45% 60% at 82% 18%, #ffd36e 0%, rgba(255,211,110,0) 62%),
+    radial-gradient(55% 70% at 78% 82%, #2bd6ff 0%, rgba(43,214,255,0) 60%),
+    radial-gradient(60% 65% at 20% 85%, #7a5cff 0%, rgba(122,92,255,0) 62%),
+    linear-gradient(120deg, #1b1140, #0a0f2c 55%, #03122e);
+}
+.wp-sunset {
+  background:
+    radial-gradient(50% 60% at 30% 20%, #ff9a3d 0%, rgba(255,154,61,0) 60%),
+    radial-gradient(60% 60% at 75% 30%, #ff4d8d 0%, rgba(255,77,141,0) 62%),
+    radial-gradient(70% 70% at 60% 90%, #6a2cff 0%, rgba(106,44,255,0) 60%),
+    linear-gradient(160deg, #2a0f3a, #120a2e 60%, #05061c);
+}
+.wp-ocean {
+  background:
+    radial-gradient(50% 60% at 20% 30%, #23e0c8 0%, rgba(35,224,200,0) 60%),
+    radial-gradient(60% 60% at 80% 20%, #2b8bff 0%, rgba(43,139,255,0) 62%),
+    radial-gradient(70% 70% at 60% 90%, #0a4bd6 0%, rgba(10,75,214,0) 60%),
+    linear-gradient(160deg, #06283d, #041c33 60%, #020c1c);
+}
+.wp-mono {
+  background:
+    radial-gradient(60% 70% at 30% 25%, #9aa4b2 0%, rgba(154,164,178,0) 60%),
+    linear-gradient(160deg, #3a4150, #1c2029 60%, #0c0e13);
+}
+/* big background text — lensing distorts it, which sells the effect */
+.wallpaper .bg-text {
+  position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center;
+  padding: 0 4vw; font-weight: 800; letter-spacing: -.02em; line-height: .92; text-transform: uppercase;
+  color: rgba(255,255,255,.12); user-select: none; font-size: clamp(56px, 12vw, 190px);
+}
+.bg-text span:nth-child(2) { text-align: right; color: rgba(255,255,255,.08); }
+.demo-label {
+  position: fixed; left: 24px; top: 20px; font-size: 13px; font-weight: 600; letter-spacing: .04em;
+  text-transform: uppercase; opacity: .72; z-index: 10;
+}
+.center { position: fixed; inset: 0; display: grid; place-items: center; gap: 24px; padding: 24px; }
+.row { display: flex; gap: 18px; flex-wrap: wrap; justify-content: center; align-items: center; }
+.stack { display: flex; flex-direction: column; gap: 18px; align-items: center; }
