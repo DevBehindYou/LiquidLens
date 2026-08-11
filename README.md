@@ -208,6 +208,8 @@ The same model is ported as an **SkSL shader** (React Native) and a **GLSL fragm
 
 ## 🎯 Why I built this
 
+> Built by **[Ashutosh Sharma](https://devbehindyou.vercel.app)**, aka **[DevBehindYou](https://github.com/DevBehindYou)** — *developer at heart, SEO specialist by mind, analyst by habit.* “I Engineer Visibility.”
+
 When Apple unveiled Liquid Glass at WWDC 2025, I went looking for a faithful web implementation. What I found was an ocean of `blur(12px)` tutorials calling themselves "liquid glass." The *actual* optics — the lensing that makes the material feel alive — were nowhere, and nothing spanned the platforms real products ship on.
 
 So I did it properly: read the physics, reverse-engineered the displacement-map technique, verified every pixel in a real rendering engine, and wrapped it in Apple's own design vocabulary — Regular/Clear, tints, interactive, morph. Then I ported the same optical model to Skia, GLSL, and Apple's native API so **one mental model works everywhere your app does**.
@@ -264,12 +266,17 @@ PRs welcome — the bar is in [CONTRIBUTING.md](CONTRIBUTING.md) (short version:
 
 ## 📄 License
 
-[MIT](LICENSE) © Akash Sharma. *"Liquid Glass" is Apple's design language; LiquidLens is an independent, educational implementation not affiliated with or endorsed by Apple Inc.*
+[MIT](LICENSE) © [Ashutosh Sharma (DevBehindYou)](https://devbehindyou.vercel.app). *"Liquid Glass" is Apple's design language; LiquidLens is an independent, educational implementation not affiliated with or endorsed by Apple Inc.*
 
 ---
 
 <div align="center">
 <img src="assets/logo.png" alt="LiquidLens logo — a glass lens droplet on an iOS-style squircle app icon" width="88" /><br>
 <sub><b>LiquidLens</b> · Apple Liquid Glass UI library · iOS 26 glass effect · CSS refraction · glassmorphism, evolved<br>
-Web · React · React Native · Flutter · SwiftUI — made with Snell's law and love for the craft.</sub>
+Web · React · React Native · Flutter · SwiftUI — made with Snell's law and love for the craft.<br><br>
+Built by <a href="https://devbehindyou.vercel.app"><b>DevBehindYou</b></a> (Ashutosh Sharma) ·
+<a href="https://github.com/DevBehindYou">GitHub</a> ·
+<a href="https://www.linkedin.com/in/devbehindyou/">LinkedIn</a> ·
+<a href="https://medium.com/@devbehindyou">Medium</a> ·
+<a href="https://x.com/devbehindyou">X</a></sub>
 </div>

@@ -43,4 +43,4 @@ background and confirm the edge actually bends the backdrop.
 Name is **LiquidLens** (final). Never "Apple LiquidLens" — Apple's name appears only
 descriptively ("implements Apple's Liquid Glass design language"). Keep the
 not-affiliated-with-Apple disclaimer in README and LICENSE. Tagline: "Apple's Liquid
-Glass, for every platform." Author: Akash Sharma. License: MIT.
+Glass, for every platform." Author: Ashutosh Sharma (DevBehindYou — github.com/DevBehindYou, devbehindyou.vercel.app). License: MIT.

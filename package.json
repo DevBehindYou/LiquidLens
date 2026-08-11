@@ -9,9 +9,9 @@
     "react", "react-native", "flutter", "swiftui", "skia"
   ],
   "license": "MIT",
-  "author": "Akash Sharma",
-  "homepage": "https://github.com/your-org/liquidlens",
-  "repository": { "type": "git", "url": "https://github.com/your-org/liquidlens.git" },
+  "author": "Ashutosh Sharma aka DevBehindYou (https://devbehindyou.vercel.app)",
+  "homepage": "https://github.com/DevBehindYou/liquidlens",
+  "repository": { "type": "git", "url": "https://github.com/DevBehindYou/liquidlens.git" },
   "workspaces": ["packages/*"],
   "scripts": {
     "start": "npx serve .",
